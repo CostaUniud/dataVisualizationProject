@@ -5,17 +5,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+// import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
   mounted () {
-    this.initData()
+    // this.initData()
   },
   methods: {
-    ...mapActions({
-      initData: 'arresti/fetch'
-    })
+    // ...mapActions({
+    //   initData: 'arresti/fetch'
+    // })
   }
 }
 </script>

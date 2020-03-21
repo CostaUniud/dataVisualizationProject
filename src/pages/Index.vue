@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
@@ -26,18 +26,21 @@ export default {
       data: []
     }
   },
-  mounted () {
+  async mounted () {
     var that = this
 
-    // brutto... è da fare con una promise probabilmente
-    setTimeout(function () {
-      for (let index = 0; index < that.arresti.length; index++) {
-        const dataElement = that.arresti[index].age
-        that.data.push(dataElement)
-      }
+    await this.initData()
+      .then(res => {
+        for (let index = 0; index < that.arresti.length; index++) {
+          const dataElement = that.arresti[index].age
+          that.data.push(dataElement)
+        }
 
-      that.$refs.myDiv.append(that.createBarChart())
-    }, 1000)
+        that.$refs.myDiv.append(that.createBarChart())
+      })
+      .catch(error => {
+        console.log('arresti error:', error)
+      })
   },
   computed: {
     ...mapGetters({
@@ -45,37 +48,47 @@ export default {
     })
   },
   methods: {
+    ...mapActions({
+      initData: 'arresti/fetch'
+    }),
     createBarChart () {
-      // Create an empty (detached) chart container.
-      const div = d3.create('div')
+      const width = 420
 
-      // Apply some styles to the chart container.
-      div.style('font', '10px sans-serif')
-      div.style('text-align', 'right')
-      div.style('color', 'white')
+      // function to scale to fit
+      const x = d3.scaleLinear()
+        .domain([0, d3.max(this.data)])
+        .range([0, width])
 
-      // Define the initial (empty) selection for the bars.
-      const bar = div.selectAll('div')
+      const y = d3.scaleBand()
+        .domain(d3.range(this.data.length))
+        .range([0, 20 * this.data.length])
 
-      // Bind this selection to the data (computing enter, update and exit).
-      const barUpdate = bar.data(this.data)
+      const svg = d3.create('svg')
+        .attr('width', width)
+        .attr('height', y.range()[1])
+        .attr('font-family', 'sans-serif')
+        .attr('font-size', '10')
+        .attr('text-anchor', 'end')
 
-      // Join the selection and the data, appending the entering bars.
-      const barNew = barUpdate.join('div')
+      const bar = svg.selectAll('g')
+        .data(this.data)
+        .join('g')
+        .attr('transform', (d, i) => `translate(0, ${y(i)})`)
 
-      // Apply some styles to the bars.
-      barNew.style('background', 'steelblue')
-      barNew.style('padding', '3px')
-      barNew.style('margin', '1px')
+      console.log('x', x)
+      bar.append('rect')
+        .attr('fill', 'steelblue')
+        .attr('width', x)
+        .attr('height', y.bandwidth() - 1)
 
-      // Set the width as a function of data.
-      barNew.style('width', d => `${d * 10}px`)
+      bar.append('text')
+        .attr('fill', 'white')
+        .attr('x', d => x(d) - 3)
+        .attr('y', y.bandwidth() / 2)
+        .attr('dy', '0.35em')
+        .text(d => d)
 
-      // Set the text of each bar as the data.
-      barNew.text(d => d)
-
-      // Return the chart container.
-      return div.node()
+      return svg.node()
     }
   }
 }
