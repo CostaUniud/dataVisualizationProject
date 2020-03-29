@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import arresti from './modules/arresti'
+import calcio from './modules/calcio'
 
 Vue.use(Vuex)
 
@@ -16,7 +17,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    arresti
+    arresti,
+    calcio
   },
 
   // enable strict mode (adds overhead!)

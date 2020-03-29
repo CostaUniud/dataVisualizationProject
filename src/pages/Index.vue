@@ -27,29 +27,39 @@ export default {
     }
   },
   async mounted () {
-    var that = this
+    // var that = this
 
-    await this.initData()
+    await d3.csv('/statics/marriage/both_sexes.csv')
       .then(res => {
-        for (let index = 0; index < that.arresti.length; index++) {
-          const dataElement = that.arresti[index].age
-          that.data.push(dataElement)
-        }
-
-        that.$refs.myDiv.append(that.createBarChart())
+        console.log(res[0])
       })
       .catch(error => {
-        console.log('arresti error:', error)
+        console.log('csv error:', error)
       })
+
+    // await this.initData()
+    //   .then(res => {
+    //     for (let index = 0; index < that.arresti.length; index++) {
+    //       const dataElement = that.arresti[index].age
+    //       that.data.push(dataElement)
+    //     }
+
+    //     that.$refs.myDiv.append(that.createBarChart())
+    //   })
+    //   .catch(error => {
+    //     console.log('arresti error:', error)
+    //   })
   },
   computed: {
     ...mapGetters({
-      arresti: 'arresti/getArresti'
+      arresti: 'arresti/getArresti',
+      league: 'calcio/getLeague'
     })
   },
   methods: {
     ...mapActions({
-      initData: 'arresti/fetch'
+      initData: 'arresti/fetch',
+      initDataLeague: 'calcio/fetch'
     }),
     createBarChart () {
       const width = 420
