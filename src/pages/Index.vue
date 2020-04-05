@@ -28,14 +28,14 @@ export default {
   },
   async mounted () {
     // var that = this
-
-    await d3.csv('/statics/marriage/both_sexes.csv')
-      .then(res => {
-        console.log(res[0])
-      })
-      .catch(error => {
-        console.log('csv error:', error)
-      })
+    this.initDataLeague()
+    // await d3.csv('/statics/marriage/both_sexes.csv')
+    //   .then(res => {
+    //     console.log(res[0])
+    //   })
+    //   .catch(error => {
+    //     console.log('csv error:', error)
+    //   })
 
     // await this.initData()
     //   .then(res => {

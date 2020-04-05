@@ -1,5 +1,3 @@
-import axios from 'axios'
-
 const state = {
   league: null
 }
@@ -19,22 +17,12 @@ const mutations = {
 
 const actions = {
   fetch (context) {
-    return new Promise((resolve, reject) => {
-      const config = {
-        headers: {
-          'x-rapidapi-host': 'sportsop-soccer-sports-open-data-v1.p.rapidapi.com',
-          'x-rapidapi-key': '32635a14e9msh017992a1d3fd0d3p11358bjsn7425cd04f53e'
-        }
+    const database = new sqlite3.Database('../../statics/soccer/soccer_database.sqlite', sqlite3.OPEN_READONLY, (err) => {
+      if (err) {
+        console.error(err.message)
       }
-      axios.get('https://sportsop-soccer-sports-open-data-v1.p.rapidapi.com/v1/leagues', config)
-        .then(async response => {
-          const json = response.data
-          context.commit('setLeague', json)
-          resolve(json)
-        })
-        .catch(error => {
-          reject(error)
-        })
+      console.log(database)
+      console.log('Connected to the soccer_database.')
     })
   }
 }
