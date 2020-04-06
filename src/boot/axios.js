@@ -5,7 +5,6 @@ Vue.prototype.$axios = axios
 
 // Add a request interceptor
 axios.interceptors.request.use(request => {
-  console.log(request)
   return request
 }, function (error) {
   console.log('axios.interceptors.request > error response:', error)

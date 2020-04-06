@@ -1,28 +1,46 @@
+import axios from 'axios'
+
 const state = {
-  league: null
+  url: 'http://localhost:3128/',
+  dati: null
 }
 
 const getters = {
-  getLeague (state) {
-    return state.league
+  getDati (state) {
+    return state.dati
+  },
+  getDato: (state, getters) => (paramkey) => {
+    console.log('getDato', paramkey)
+    if (getters.getDati) {
+      const found = getters.getDati[paramkey]
+      if (found) {
+        return found
+      } else {
+        return null
+      }
+    }
+    return null
   }
 }
 
 const mutations = {
-  setLeague (state, value) {
-    console.log('setLeague', value)
-    state.league = value
+  setDati (state, value) {
+    // console.log('setDati', value)
+    state.dati = value
   }
 }
 
 const actions = {
   fetch (context) {
-    const database = new sqlite3.Database('../../statics/soccer/soccer_database.sqlite', sqlite3.OPEN_READONLY, (err) => {
-      if (err) {
-        console.error(err.message)
-      }
-      console.log(database)
-      console.log('Connected to the soccer_database.')
+    return new Promise((resolve, reject) => {
+      axios.get(context.state.url + 'country')
+        .then(response => {
+          context.commit('setDati', response.data)
+          resolve(response.data)
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   }
 }

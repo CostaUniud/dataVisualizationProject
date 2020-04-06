@@ -11,6 +11,15 @@
         </q-item>
       </template>
     </q-virtual-scroll> -->
+    <q-virtual-scroll :items="getDato('country')" separator>
+      <template v-slot="{ item, index }">
+        <q-item :key="index">
+          <q-item-section>
+            <q-item-label>{{ item.name }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-virtual-scroll>
     <div ref="myDiv"></div>
   </q-page>
 </template>
@@ -28,7 +37,15 @@ export default {
   },
   async mounted () {
     // var that = this
-    this.initDataLeague()
+    await this.initDataLeague()
+      .then(res => {
+        console.log(res)
+        console.log(this.getDato('country'))
+        // console.log(this.getValParametro('country'))
+      })
+      .catch(error => {
+        console.log('initDataLeague error:', error)
+      })
     // await d3.csv('/statics/marriage/both_sexes.csv')
     //   .then(res => {
     //     console.log(res[0])
@@ -53,7 +70,8 @@ export default {
   computed: {
     ...mapGetters({
       arresti: 'arresti/getArresti',
-      league: 'calcio/getLeague'
+      getDato: 'calcio/getDato',
+      getValParametro: 'calcio/getValParametro'
     })
   },
   methods: {
