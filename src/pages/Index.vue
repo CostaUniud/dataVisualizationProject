@@ -1,123 +1,136 @@
 <template>
   <q-page class="flex flex-center">
-    <!-- <q-virtual-scroll :items="arresti" separator>
+    <!-- <q-virtual-scroll
+      style="max-height: 90vh"
+      :virtual-scroll-item-size="48"
+      :virtual-scroll-sticky-size-start="48"
+      :virtual-scroll-sticky-size-end="32"
+      :items="listSuicidi"
+      separator>
       <template v-slot="{ item, index }">
-        <q-item :key="index" clickable>
+        <q-item :key="index" v-if="item.country === 'Albania'">
           <q-item-section>
-            <q-item-label>
-              {{ item.arresteename }}
-            </q-item-label>
+            <q-item-label>{{ item.country }}</q-item-label>
+            <q-item-label>{{ item.year }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
     </q-virtual-scroll> -->
-    <q-virtual-scroll :items="getDato('country')" separator>
-      <template v-slot="{ item, index }">
-        <q-item :key="index">
-          <q-item-section>
-            <q-item-label>{{ item.name }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </template>
-    </q-virtual-scroll>
-    <div ref="myDiv"></div>
+
+    <svg id="map" width="1050" height="600"></svg>
   </q-page>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
-  name: 'PageIndex',
+  name: 'Index',
   data () {
     return {
-      data: []
+      listSuicidi: []
     }
   },
-  async mounted () {
-    // var that = this
-    await this.initDataLeague()
+  async beforeMount () {
+    await d3.json('/statics/suicide/suicides.json')
       .then(res => {
-        console.log(res)
-        console.log(this.getDato('country'))
-        // console.log(this.getValParametro('country'))
+        this.setSuicidi(res)
       })
       .catch(error => {
-        console.log('initDataLeague error:', error)
+        console.log('csv error:', error)
       })
-    // await d3.csv('/statics/marriage/both_sexes.csv')
-    //   .then(res => {
-    //     console.log(res[0])
-    //   })
-    //   .catch(error => {
-    //     console.log('csv error:', error)
-    //   })
+    this.listSuicidi = this.suicidi
+    Object.freeze(this.listSuicidi)
+  },
+  mounted () {
+    // The svg
+    var svg = d3.select('svg'),
+      width = +svg.attr('width'),
+      height = +svg.attr('height')
 
-    // await this.initData()
-    //   .then(res => {
-    //     for (let index = 0; index < that.arresti.length; index++) {
-    //       const dataElement = that.arresti[index].age
-    //       that.data.push(dataElement)
-    //     }
+    // Map and projection
+    var path = d3.geoPath()
+    var projection = d3.geoNaturalEarth1()
+      .scale(width / 1.3 / Math.PI)
+      .center([0, 20])
+      .translate([width / 2, height / 2])
 
-    //     that.$refs.myDiv.append(that.createBarChart())
-    //   })
-    //   .catch(error => {
-    //     console.log('arresti error:', error)
-    //   })
+    // Data and color scale
+    var data = d3.map()
+    var colorScale = d3.scaleThreshold()
+      .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
+      .range(d3.schemeBlues[7])
+
+    // Load external data and boot
+    var p1 = d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
+    var p2 = d3.csv('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv')
+
+    Promise.all([p1, p2])
+      .then(d => {
+        d[1].forEach(function (row) {
+          data.set(row.code, +row.pop)
+        })
+
+        const mouseOver = function (d) {
+          d3.selectAll('.Country')
+            .transition()
+            .duration(200)
+            .style('opacity', 0.5)
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style('opacity', 1)
+            .style('stroke', 'black')
+        }
+
+        const mouseLeave = function (d) {
+          d3.selectAll('.Country')
+            .transition()
+            .duration(200)
+            .style('opacity', 0.8)
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .style('stroke', 'transparent')
+        }
+
+        // Draw the map
+        svg.append('g')
+          .selectAll('path')
+          .data(d[0].features)
+          .enter()
+          .append('path')
+          // draw each country
+          .attr('d', path
+            .projection(projection)
+          )
+          // set the color of each country
+          .attr('fill', function (d) {
+            d.total = data.get(d.id) || 0
+            return colorScale(d.total)
+          })
+          .style('stroke', 'transparent')
+          .attr('class', function (d) { return 'Country' })
+          .style('opacity', 0.8)
+          .on('mouseover', mouseOver)
+          .on('mouseleave', mouseLeave)
+      })
   },
   computed: {
     ...mapGetters({
-      arresti: 'arresti/getArresti',
-      getDato: 'calcio/getDato',
-      getValParametro: 'calcio/getValParametro'
+      suicidi: 'suicidi/getSuicidi'
     })
   },
   methods: {
-    ...mapActions({
-      initData: 'arresti/fetch',
-      initDataLeague: 'calcio/fetch'
-    }),
-    createBarChart () {
-      const width = 420
-
-      // function to scale to fit
-      const x = d3.scaleLinear()
-        .domain([0, d3.max(this.data)])
-        .range([0, width])
-
-      const y = d3.scaleBand()
-        .domain(d3.range(this.data.length))
-        .range([0, 20 * this.data.length])
-
-      const svg = d3.create('svg')
-        .attr('width', width)
-        .attr('height', y.range()[1])
-        .attr('font-family', 'sans-serif')
-        .attr('font-size', '10')
-        .attr('text-anchor', 'end')
-
-      const bar = svg.selectAll('g')
-        .data(this.data)
-        .join('g')
-        .attr('transform', (d, i) => `translate(0, ${y(i)})`)
-
-      console.log('x', x)
-      bar.append('rect')
-        .attr('fill', 'steelblue')
-        .attr('width', x)
-        .attr('height', y.bandwidth() - 1)
-
-      bar.append('text')
-        .attr('fill', 'white')
-        .attr('x', d => x(d) - 3)
-        .attr('y', y.bandwidth() / 2)
-        .attr('dy', '0.35em')
-        .text(d => d)
-
-      return svg.node()
-    }
+    ...mapMutations({
+      setSuicidi: 'suicidi/setSuicidi'
+    })
   }
 }
 </script>
+
+<style lang="sass" scoped>
+svg
+  border: 1px solid black
+</style>
