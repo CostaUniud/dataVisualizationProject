@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import arresti from './modules/arresti'
 import calcio from './modules/calcio'
 import suicidi from './modules/suicidi'
+import db from './modules/db'
 
 Vue.use(Vuex)
 
@@ -20,7 +21,8 @@ export default new Vuex.Store({
   modules: {
     arresti,
     calcio,
-    suicidi
+    suicidi,
+    db
   },
 
   // enable strict mode (adds overhead!)

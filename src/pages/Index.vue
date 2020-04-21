@@ -17,12 +17,12 @@
       </template>
     </q-virtual-scroll> -->
 
-    <svg id="map" width="1050" height="600"></svg>
+    <svg id="map" width="1200" height="600"></svg>
   </q-page>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
@@ -33,15 +33,17 @@ export default {
     }
   },
   async beforeMount () {
-    await d3.json('/statics/suicide/suicides.json')
-      .then(res => {
-        this.setSuicidi(res)
-      })
-      .catch(error => {
-        console.log('csv error:', error)
-      })
-    this.listSuicidi = this.suicidi
-    Object.freeze(this.listSuicidi)
+    // await d3.json('/statics/suicide/suicides.json')
+    //   .then(res => {
+    //     this.setSuicidi(res)
+    //   })
+    //   .catch(error => {
+    //     console.log('csv error:', error)
+    //   })
+    // this.listSuicidi = this.suicidi
+    // Object.freeze(this.listSuicidi)
+    await this.start()
+    this.init()
   },
   mounted () {
     // The svg
@@ -125,6 +127,11 @@ export default {
   methods: {
     ...mapMutations({
       setSuicidi: 'suicidi/setSuicidi'
+    }),
+    ...mapActions({
+      start: 'db/start',
+      setSuicidi: 'suicidi/setSuicidi',
+      init: 'suicidi/init'
     })
   }
 }
