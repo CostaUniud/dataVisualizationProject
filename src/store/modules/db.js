@@ -30,7 +30,7 @@ const actions = {
 
 const mutations = {
   setDb (state, value) {
-    console.log('setDb', value)
+    // console.log('setDb', value)
     state.db = value
   }
 }

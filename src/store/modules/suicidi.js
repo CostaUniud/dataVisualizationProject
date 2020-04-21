@@ -70,7 +70,6 @@ const actions = {
             .then(async response => {
               await db.transaction(function (tx) {
                 response.forEach(function (row) {
-                  // console.log(row)
                   tx.executeSql(`INSERT INTO suicidi(
                                   country,
                                   year,
@@ -86,9 +85,8 @@ const actions = {
                                   generation
                                   ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
                                 `,
-                  [row.country, row.year, row.sex, row.age, row.suicides, row.population, row['suicides/100k pop'], row['country-year'], row['HDI for year'], row['" gdp_for_year ($) "'], row['gdp_per_capita ($)'], row.generation],
+                  [row.country, row.year, row.sex, row.age, row.suicides_no, row.population, row['suicides/100k pop'], row['country-year'], row['HDI for year'], row[' gdp_for_year ($) '], row['gdp_per_capita ($)'], row.generation],
                   function (tx, resultSet) {
-                    // console.log('resultSet', resultSet)
                   }, function (error) {
                     reject(error)
                   })
@@ -96,25 +94,8 @@ const actions = {
               }, function (error) {
                 reject(error)
               }, function () {
-                // context.commit('setParametri', json)
                 resolve(true)
               })
-              // await db.transaction(function (tx) {
-              //   let campi = Object.keys(json)
-              //   for (let i = 0; i < campi.length; i++) {
-              //     let campo = campi[i]
-              //     tx.executeSql(`INSERT INTO parametri VALUES (?,?)`, [campo, JSON.stringify(json[campo])],
-              //       function (tx, resultSet) {
-              //       }, function (error) {
-              //         reject(error)
-              //       })
-              //   }
-              // }, function (error) {
-              //   reject(error)
-              // }, function () {
-              //   context.commit('setParametri', json)
-              //   resolve(true)
-              // })
             })
         })
         .catch(error => {
@@ -123,29 +104,31 @@ const actions = {
     })
   },
   getFromDb (context) {
-    // return new Promise((resolve, reject) => {
-    //   store.dispatch('db/open')
-    //     .then((db) => {
-    //       db.transaction(function (tx) {
-    //         tx.executeSql(
-    //           'SELECT * FROM parametri', [],
-    //           function (tx, resultSet) {
-    //             let parametri = {}
-    //             for (let r = 0; r < resultSet.rows.length; r++) {
-    //               parametri[resultSet.rows.item(r).dominio] = JSON.parse(resultSet.rows.item(r).valore)
-    //             }
-    //             context.commit('setParametri', parametri)
-    //           }, function (error) {
-    //             reject(error)
-    //           })
-    //       }, function (error) {
-    //         reject(error)
-    //       }, function () {
-    //         // console.log('getFromDb transaction ok')
-    //         resolve(true)
-    //       })
-    //     })
-    // })
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT countryYear, SUM(suicides)
+                FROM suicidi
+                GROUP BY countryYear`,
+              [],
+              function (tx, resultSet) {
+                let suicidi = {}
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  console.log(resultSet.rows.item(r))
+                  
+                }
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
   }
 }
 

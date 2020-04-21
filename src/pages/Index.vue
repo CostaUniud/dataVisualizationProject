@@ -43,7 +43,8 @@ export default {
     // this.listSuicidi = this.suicidi
     // Object.freeze(this.listSuicidi)
     await this.start()
-    this.init()
+    // await this.init()
+    await this.getFromDb()
   },
   mounted () {
     // The svg
@@ -131,7 +132,8 @@ export default {
     ...mapActions({
       start: 'db/start',
       setSuicidi: 'suicidi/setSuicidi',
-      init: 'suicidi/init'
+      init: 'suicidi/init',
+      getFromDb: 'suicidi/getFromDb'
     })
   }
 }
