@@ -2,7 +2,7 @@
   "name": "visual-history",
   "version": "0.0.1",
   "description": "An SPA for visualization history events.",
-  "productName": "Visual History",
+  "productName": "Suicides in the world",
   "cordovaId": "org.cordova.quasar.app",
   "capacitorId": "",
   "author": "CostaUniud <l.costantino@icloud.com>",

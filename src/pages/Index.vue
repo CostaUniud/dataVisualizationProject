@@ -68,8 +68,8 @@ export default {
       // Map and projection
       var path = d3.geoPath()
       var projection = d3.geoNaturalEarth1()
-        .scale(width / 1.3 / Math.PI)
-        .center([0, 20])
+        .scale(width / 1.5 / Math.PI)
+        .center([5, 0])
         .translate([width / 2, height / 2])
 
       // Data and color scale
@@ -143,6 +143,6 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-svg
-  border: 1px solid black
+// svg
+//   border: 1px solid black
 </style>

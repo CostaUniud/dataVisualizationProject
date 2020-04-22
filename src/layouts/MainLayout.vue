@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar>
         <q-toolbar-title>
-          Suicides in the world
+          Visual language for complex systems's project - University of Udine
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
