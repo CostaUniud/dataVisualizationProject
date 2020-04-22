@@ -39,12 +39,12 @@ const mutations = {
 }
 
 const actions = {
-  init (context, payload) {
+  init () {
     return new Promise((resolve, reject) => {
       store.dispatch('db/open')
         .then(async db => {
           db.transaction(function (tx) {
-            // tx.executeSql('DELETE FROM suicidi', [])
+            tx.executeSql('DELETE FROM suicidi', [])
             tx.executeSql(`CREATE TABLE IF NOT EXISTS suicidi (
                             id INTEGER PRIMARY KEY,
                             country TEXT,
@@ -93,9 +93,18 @@ const actions = {
                 })
               }, function (error) {
                 reject(error)
-              }, function () {
-                resolve(true)
+              }, async function () {
+                await actions.updateDb()
+                  .then(response => {
+                    resolve(true)
+                  })
+                  .catch(error => {
+                    reject(error)
+                  })
               })
+            })
+            .catch(error => {
+              reject(error)
             })
         })
         .catch(error => {
@@ -103,22 +112,90 @@ const actions = {
         })
     })
   },
-  getFromDb (context) {
+  updateDb () {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then(db => {
+          db.transaction(function (tx) {
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'Russia'
+                            WHERE country = 'Russian Federation'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'United States of America'
+                            WHERE country = 'United States'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'Republic of Serbia'
+                            WHERE country = 'Serbia'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'South Korea'
+                            WHERE country = 'Republic of Korea'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'The Bahamas'
+                            WHERE country = 'Bahamas'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+            tx.executeSql(`UPDATE suicidi
+                            SET country = 'Mauritania'
+                            WHERE country = 'Mauritius'
+                          `,
+            [],
+            function (tx, resultSet) {
+            }, function (error) {
+              reject(error)
+            })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getSuicidiFromDb (context, year) {
     return new Promise((resolve, reject) => {
       store.dispatch('db/open')
         .then((db) => {
           db.transaction(function (tx) {
             tx.executeSql(
-              `SELECT countryYear, SUM(suicides)
+              `SELECT countryYear, country, SUM(suicidesRate)
                 FROM suicidi
+                WHERE year = ?
                 GROUP BY countryYear`,
-              [],
+              [year],
               function (tx, resultSet) {
-                let suicidi = {}
+                const suicidi = {}
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  console.log(resultSet.rows.item(r))
-                  
+                  suicidi[resultSet.rows.item(r).country] = resultSet.rows.item(r)['SUM(suicidesRate)']
                 }
+                context.commit('setSuicidi', suicidi)
               }, function (error) {
                 reject(error)
               })

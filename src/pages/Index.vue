@@ -17,7 +17,7 @@
       </template>
     </q-virtual-scroll> -->
 
-    <svg id="map" width="1200" height="600"></svg>
+    <svg id="map" width="1400" height="800"></svg>
   </q-page>
 </template>
 
@@ -33,92 +33,17 @@ export default {
     }
   },
   async beforeMount () {
-    // await d3.json('/statics/suicide/suicides.json')
-    //   .then(res => {
-    //     this.setSuicidi(res)
-    //   })
-    //   .catch(error => {
-    //     console.log('csv error:', error)
-    //   })
-    // this.listSuicidi = this.suicidi
-    // Object.freeze(this.listSuicidi)
-    await this.start()
-    // await this.init()
-    await this.getFromDb()
+    var p1 = await this.start()
+    var p2 = await this.init()
+    Promise.all([p1, p2])
+      .then(async values => {
+        await this.getSuicidiFromDb(2000)
+          .then(response => {
+            this.mappa()
+          })
+      })
   },
   mounted () {
-    // The svg
-    var svg = d3.select('svg'),
-      width = +svg.attr('width'),
-      height = +svg.attr('height')
-
-    // Map and projection
-    var path = d3.geoPath()
-    var projection = d3.geoNaturalEarth1()
-      .scale(width / 1.3 / Math.PI)
-      .center([0, 20])
-      .translate([width / 2, height / 2])
-
-    // Data and color scale
-    var data = d3.map()
-    var colorScale = d3.scaleThreshold()
-      .domain([100000, 1000000, 10000000, 30000000, 100000000, 500000000])
-      .range(d3.schemeBlues[7])
-
-    // Load external data and boot
-    var p1 = d3.json('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson')
-    var p2 = d3.csv('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world_population.csv')
-
-    Promise.all([p1, p2])
-      .then(d => {
-        d[1].forEach(function (row) {
-          data.set(row.code, +row.pop)
-        })
-
-        const mouseOver = function (d) {
-          d3.selectAll('.Country')
-            .transition()
-            .duration(200)
-            .style('opacity', 0.5)
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .style('opacity', 1)
-            .style('stroke', 'black')
-        }
-
-        const mouseLeave = function (d) {
-          d3.selectAll('.Country')
-            .transition()
-            .duration(200)
-            .style('opacity', 0.8)
-          d3.select(this)
-            .transition()
-            .duration(200)
-            .style('stroke', 'transparent')
-        }
-
-        // Draw the map
-        svg.append('g')
-          .selectAll('path')
-          .data(d[0].features)
-          .enter()
-          .append('path')
-          // draw each country
-          .attr('d', path
-            .projection(projection)
-          )
-          // set the color of each country
-          .attr('fill', function (d) {
-            d.total = data.get(d.id) || 0
-            return colorScale(d.total)
-          })
-          .style('stroke', 'transparent')
-          .attr('class', function (d) { return 'Country' })
-          .style('opacity', 0.8)
-          .on('mouseover', mouseOver)
-          .on('mouseleave', mouseLeave)
-      })
   },
   computed: {
     ...mapGetters({
@@ -131,10 +56,88 @@ export default {
     }),
     ...mapActions({
       start: 'db/start',
-      setSuicidi: 'suicidi/setSuicidi',
       init: 'suicidi/init',
-      getFromDb: 'suicidi/getFromDb'
-    })
+      getSuicidiFromDb: 'suicidi/getSuicidiFromDb'
+    }),
+    async mappa () {
+      // The svg
+      var svg = d3.select('svg'),
+        width = +svg.attr('width'),
+        height = +svg.attr('height')
+
+      // Map and projection
+      var path = d3.geoPath()
+      var projection = d3.geoNaturalEarth1()
+        .scale(width / 1.3 / Math.PI)
+        .center([0, 20])
+        .translate([width / 2, height / 2])
+
+      // Data and color scale
+      var data = d3.map()
+      var colorScale = d3.scaleThreshold()
+        .domain([1, 10, 100, 300, 1000, 5000])
+        .range(d3.schemeReds[7])
+
+      await d3.json('/statics/suicide/world.json')
+        .then(world => {
+          for (var key in this.suicidi) {
+            // for (var k in world.features) {
+            //   const country = world.features[k].properties.name
+            //   if (key === country) {
+            //     console.log(key + ' cè')
+            //     break
+            //   } else {
+            //     console.log('Paese al momento non cè', key)
+            //   }
+            // }
+            data.set(key, +this.suicidi[key])
+          }
+          // const mouseOver = function (d) {
+          //   d3.selectAll('.Country')
+          //     .transition()
+          //     .duration(200)
+          //     .style('opacity', 0.5)
+          //   d3.select(this)
+          //     .transition()
+          //     .duration(200)
+          //     .style('opacity', 1)
+          //     .style('stroke', 'black')
+          // }
+
+          // const mouseLeave = function (d) {
+          //   d3.selectAll('.Country')
+          //     .transition()
+          //     .duration(200)
+          //     .style('opacity', 0.8)
+          //   d3.select(this)
+          //     .transition()
+          //     .duration(200)
+          //     .style('stroke', 'transparent')
+          // }
+
+          // Draw the map
+          svg.append('g')
+            .selectAll('path')
+            .data(world.features)
+            .enter()
+            .append('path')
+            // draw each country
+            .attr('d', path
+              .projection(projection)
+            )
+            // set the color of each country
+            .attr('fill', function (d) {
+              // console.log(d.properties.name)
+              d.total = data.get(d.properties.name) || 0
+              return colorScale(d.total)
+            })
+            .style('stroke', 'transparent')
+            .attr('class', function (d) { return 'Country' })
+            .style('opacity', 0.8)
+            // .on('mouseover', mouseOver)
+            // .on('mouseleave', mouseLeave)
+        })
+    }
   }
 }
 </script>

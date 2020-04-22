@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar>
         <q-toolbar-title>
-          Quasar App
+          Suicides in the world
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
