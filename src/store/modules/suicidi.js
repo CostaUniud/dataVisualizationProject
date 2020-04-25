@@ -44,7 +44,6 @@ const actions = {
       store.dispatch('db/open')
         .then(async db => {
           db.transaction(function (tx) {
-            tx.executeSql('DELETE FROM suicidi', [])
             tx.executeSql(`CREATE TABLE IF NOT EXISTS suicidi (
                             id INTEGER PRIMARY KEY,
                             country TEXT,
@@ -69,6 +68,7 @@ const actions = {
           await d3.csv('/statics/suicide/master.csv')
             .then(async response => {
               await db.transaction(function (tx) {
+                tx.executeSql('DELETE FROM suicidi', [])
                 response.forEach(function (row) {
                   tx.executeSql(`INSERT INTO suicidi(
                                   country,

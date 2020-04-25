@@ -17,7 +17,8 @@
       </template>
     </q-virtual-scroll> -->
 
-    <svg id="map" width="1400" height="800"></svg>
+    <!-- <svg id="map" width="1400" height="800"></svg> -->
+    <div id="map"></div>
   </q-page>
 </template>
 
@@ -60,10 +61,14 @@ export default {
       getSuicidiFromDb: 'suicidi/getSuicidiFromDb'
     }),
     async mappa () {
+      var width = 1400
+      var height = 800
+
       // The svg
-      var svg = d3.select('svg'),
-        width = +svg.attr('width'),
-        height = +svg.attr('height')
+      var svg = d3.select('#map')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
 
       // Map and projection
       var path = d3.geoPath()
@@ -77,6 +82,11 @@ export default {
       var colorScale = d3.scaleThreshold()
         .domain([1, 10, 100, 300, 1000, 5000])
         .range(d3.schemeReds[7])
+
+      var tooltip = d3.select('#map')
+        .append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0)
 
       await d3.json('/statics/suicide/world.json')
         .then(world => {
@@ -92,28 +102,43 @@ export default {
             // }
             data.set(key, +this.suicidi[key])
           }
-          // const mouseOver = function (d) {
-          //   d3.selectAll('.Country')
-          //     .transition()
-          //     .duration(200)
-          //     .style('opacity', 0.5)
-          //   d3.select(this)
-          //     .transition()
-          //     .duration(200)
-          //     .style('opacity', 1)
-          //     .style('stroke', 'black')
-          // }
 
-          // const mouseLeave = function (d) {
-          //   d3.selectAll('.Country')
-          //     .transition()
-          //     .duration(200)
-          //     .style('opacity', 0.8)
-          //   d3.select(this)
-          //     .transition()
-          //     .duration(200)
-          //     .style('stroke', 'transparent')
-          // }
+          const mouseOver = function (d) {
+            d3.selectAll('.Country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.5)
+              .style('stroke', 'transparent')
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .style('opacity', 1)
+              .style('stroke', 'black')
+          }
+
+          const mouseLeave = function (d) {
+            d3.selectAll('.Country')
+              .transition()
+              .duration(200)
+              .style('opacity', 0.8)
+              .style('stroke', 'transparent')
+            d3.select(this)
+              .transition()
+              .duration(200)
+              .style('stroke', 'transparent')
+            tooltip.transition()
+              .duration(500)
+              .style('opacity', 0)
+          }
+
+          const mouseMove = function (d) {
+            tooltip.transition()
+              .duration(200)
+              .style('opacity', 0.9)
+            tooltip.html(d.properties.name)
+              .style('left', (d3.event.pageX) + 'px')
+              .style('top', (d3.event.pageY - 30) + 'px')
+          }
 
           // Draw the map
           svg.append('g')
@@ -127,22 +152,29 @@ export default {
             )
             // set the color of each country
             .attr('fill', function (d) {
-              // console.log(d.properties.name)
               d.total = data.get(d.properties.name) || 0
               return colorScale(d.total)
             })
             .style('stroke', 'transparent')
             .attr('class', function (d) { return 'Country' })
             .style('opacity', 0.8)
-            // .on('mouseover', mouseOver)
-            // .on('mouseleave', mouseLeave)
+            .on('mouseover', mouseOver)
+            .on('mouseout', mouseLeave)
+            .on('mousemove', mouseMove)
         })
     }
   }
 }
 </script>
 
-<style lang="sass" scoped>
-// svg
-//   border: 1px solid black
+<style lang="sass">
+.tooltip
+  display: block-inline
+  position: absolute
+  text-align: center
+  padding: 7px
+  font: 12px sans-serif
+  background: #fff
+  border: 0px
+  pointer-events: none
 </style>
