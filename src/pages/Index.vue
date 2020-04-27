@@ -16,9 +16,15 @@
         </q-item>
       </template>
     </q-virtual-scroll> -->
-
-    <!-- <svg id="map" width="1400" height="800"></svg> -->
-    <div id="map"></div>
+    <main>
+      <div>
+        <q-slider v-if="!visible" v-model="fieldYear" :min="1987" :max="2016"/>
+        <div id="map"></div>
+        <q-inner-loading :showing="visible">
+          <q-spinner-ball color="primary" size="10em"/>
+        </q-inner-loading>
+      </div>
+    </main>
   </q-page>
 </template>
 
@@ -30,21 +36,32 @@ export default {
   name: 'Index',
   data () {
     return {
-      listSuicidi: []
+      listSuicidi: [],
+      visible: false,
+      fieldYear: 1987
     }
   },
   async beforeMount () {
+    this.visible = true
     var p1 = await this.start()
     var p2 = await this.init()
     Promise.all([p1, p2])
       .then(async values => {
-        await this.getSuicidiFromDb(2000)
+        await this.getSuicidiFromDb(2016)
           .then(response => {
             this.mappa()
           })
       })
   },
   mounted () {
+  },
+  watch: {
+    fieldYear: async function () {
+      await this.getSuicidiFromDb(this.fieldYear)
+        .then(response => {
+          this.mappa()
+        })
+    }
   },
   computed: {
     ...mapGetters({
@@ -80,13 +97,18 @@ export default {
       // Data and color scale
       var data = d3.map()
       var colorScale = d3.scaleThreshold()
-        .domain([1, 10, 100, 300, 1000, 5000])
+        .domain([5, 10, 15])
         .range(d3.schemeReds[7])
-
+      // Tooltip
       var tooltip = d3.select('#map')
         .append('div')
         .attr('class', 'tooltip')
         .style('opacity', 0)
+      // Legend
+      var keys = ['< 5.0', '5.0 - 9.9', '10.0 - 14.9', '≥ 15.0']
+      var color = d3.scaleOrdinal()
+        .domain(keys)
+        .range(d3.schemeReds[7])
 
       await d3.json('/statics/suicide/world.json')
         .then(world => {
@@ -100,7 +122,7 @@ export default {
             //     console.log('Paese al momento non cè', key)
             //   }
             // }
-            data.set(key, +this.suicidi[key])
+            data.set(key, this.suicidi[key])
           }
 
           const mouseOver = function (d) {
@@ -125,6 +147,7 @@ export default {
             d3.select(this)
               .transition()
               .duration(200)
+              .style('opacity', 0.8)
               .style('stroke', 'transparent')
             tooltip.transition()
               .duration(500)
@@ -134,8 +157,8 @@ export default {
           const mouseMove = function (d) {
             tooltip.transition()
               .duration(200)
-              .style('opacity', 0.9)
-            tooltip.html(d.properties.name)
+              .style('opacity', 1)
+            tooltip.html(d.properties.name + '<br>' + d.total)
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
           }
@@ -161,7 +184,30 @@ export default {
             .on('mouseover', mouseOver)
             .on('mouseout', mouseLeave)
             .on('mousemove', mouseMove)
+          // Draw the legend
+          var size = 20
+          svg.selectAll('mydots')
+            .data(keys)
+            .enter()
+            .append('rect')
+            .attr('x', 0)
+            .attr('y', function (d, i) { return 600 + i * (size + 5) })
+            .attr('width', size)
+            .attr('height', size)
+            .style('fill', function (d) { return color(d) })
+          svg.selectAll('mylabels')
+            .data(keys)
+            .enter()
+            .append('text')
+            .attr('x', 0 + size * 1.2)
+            .attr('y', function (d, i) { return 600 + i * (size + 5) + (size / 2) })
+            .style('fill', 'black')
+            .text(function (d) { return d })
+            .attr('text-anchor', 'left')
+            .style('alignment-baseline', 'middle')
         })
+
+      this.visible = false
     }
   }
 }
@@ -175,6 +221,5 @@ export default {
   padding: 7px
   font: 12px sans-serif
   background: #fff
-  border: 0px
   pointer-events: none
 </style>

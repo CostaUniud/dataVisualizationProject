@@ -9,26 +9,7 @@ const getters = {
   getSuicidi (state) {
     // console.log('getSuicidi', state.suicidi)
     return state.suicidi
-  },
-  getSuicidio: (state, getters) => (paramkey) => {
-    console.log('getSuicidio', paramkey)
-    if (getters.getSuicidi) {
-      const found = getters.getSuicidi[paramkey]
-      if (found) {
-        return found
-      } else {
-        return null
-      }
-    }
-    return null
   }
-  // getValSuicidio: (state, getters) => (paramkey) => {
-  //   console.log('getValSuicidio', paramkey)
-  //   if (getters.getSuicidio('arresteename')) {
-  //     return getters.getSuicidio('arresteename')[paramkey]
-  //   }
-  //   return false
-  // }
 }
 
 const mutations = {
@@ -185,15 +166,15 @@ const actions = {
         .then((db) => {
           db.transaction(function (tx) {
             tx.executeSql(
-              `SELECT countryYear, country, SUM(suicidesRate)
+              `SELECT country, SUM(suicides), SUM(population)
                 FROM suicidi
                 WHERE year = ?
-                GROUP BY countryYear`,
+                GROUP BY country`,
               [year],
               function (tx, resultSet) {
                 const suicidi = {}
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  suicidi[resultSet.rows.item(r).country] = resultSet.rows.item(r)['SUM(suicidesRate)']
+                  suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r)['SUM(suicides)'] / resultSet.rows.item(r)['SUM(population)']) * 100000) * 10) / 10
                 }
                 context.commit('setSuicidi', suicidi)
               }, function (error) {
