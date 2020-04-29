@@ -39,8 +39,8 @@ const actions = {
                             gdpYear REAL,
                             gpdCapita INTEGER,
                             generation TEXT
-                            )
-                          `)
+                            )`
+            )
           }, function (error) {
             reject(error)
           }, function () {
@@ -64,8 +64,7 @@ const actions = {
                                   gdpYear,
                                   gpdCapita,
                                   generation
-                                  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-                                `,
+                                  ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`,
                   [row.country, row.year, row.sex, row.age, row.suicides_no, row.population, row['suicides/100k pop'], row['country-year'], row['HDI for year'], row[' gdp_for_year ($) '], row['gdp_per_capita ($)'], row.generation],
                   function (tx, resultSet) {
                   }, function (error) {
@@ -155,6 +154,13 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // await actions.updateCountry()
+            //   .then(response => {
+            //     resolve(true)
+            //   })
+            //   .catch(error => {
+            //     reject(error)
+            //   })
             resolve(true)
           })
         })
@@ -166,15 +172,15 @@ const actions = {
         .then((db) => {
           db.transaction(function (tx) {
             tx.executeSql(
-              `SELECT country, SUM(suicides), SUM(population)
-                FROM suicidi
-                WHERE year = ?
-                GROUP BY country`,
+              `SELECT country, SUM(suicidi.suicides) AS somma_suicidi, SUM(suicidi.population) AS somma_popolazione
+              FROM suicidi
+              WHERE year = ?
+              GROUP BY country`,
               [year],
               function (tx, resultSet) {
                 const suicidi = {}
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r)['SUM(suicides)'] / resultSet.rows.item(r)['SUM(population)']) * 100000) * 10) / 10
+                  suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000) * 10) / 10
                 }
                 context.commit('setSuicidi', suicidi)
               }, function (error) {

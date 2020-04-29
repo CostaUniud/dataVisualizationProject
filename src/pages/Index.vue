@@ -18,7 +18,7 @@
     </q-virtual-scroll> -->
     <main>
       <div>
-        <q-slider v-if="!visible" v-model="fieldYear" :min="1987" :max="2016"/>
+        <q-slider v-if="!visible" v-model="fieldYear" :min="1986" :max="2016"/>
         <div id="map"></div>
         <q-inner-loading :showing="visible">
           <q-spinner-ball color="primary" size="10em"/>
@@ -38,7 +38,13 @@ export default {
     return {
       listSuicidi: [],
       visible: false,
-      fieldYear: 1987
+      fieldYear: 1986,
+      width: 1400,
+      height: 800,
+      svg: null,
+      path: null,
+      projection: null,
+      colorScale: null
     }
   },
   async beforeMount () {
@@ -47,7 +53,7 @@ export default {
     var p2 = await this.init()
     Promise.all([p1, p2])
       .then(async values => {
-        await this.getSuicidiFromDb(2016)
+        await this.getSuicidiFromDb(1986)
           .then(response => {
             this.mappa()
           })
@@ -57,9 +63,10 @@ export default {
   },
   watch: {
     fieldYear: async function () {
+      console.log(this.fieldYear)
       await this.getSuicidiFromDb(this.fieldYear)
         .then(response => {
-          this.mappa()
+          this.updateMap()
         })
     }
   },
@@ -78,25 +85,23 @@ export default {
       getSuicidiFromDb: 'suicidi/getSuicidiFromDb'
     }),
     async mappa () {
-      var width = 1400
-      var height = 800
-
+      var that = this
       // The svg
-      var svg = d3.select('#map')
+      that.svg = d3.select('#map')
         .append('svg')
-        .attr('width', width)
-        .attr('height', height)
+        .attr('width', that.width)
+        .attr('height', that.height)
 
       // Map and projection
-      var path = d3.geoPath()
-      var projection = d3.geoNaturalEarth1()
-        .scale(width / 1.5 / Math.PI)
+      that.path = d3.geoPath()
+      that.projection = d3.geoNaturalEarth1()
+        .scale(that.width / 1.5 / Math.PI)
         .center([5, 0])
-        .translate([width / 2, height / 2])
+        .translate([that.width / 2, that.height / 2])
 
       // Data and color scale
       var data = d3.map()
-      var colorScale = d3.scaleThreshold()
+      that.colorScale = d3.scaleThreshold()
         .domain([5, 10, 15])
         .range(d3.schemeReds[7])
       // Tooltip
@@ -112,7 +117,7 @@ export default {
 
       await d3.json('/statics/suicide/world.json')
         .then(world => {
-          for (var key in this.suicidi) {
+          for (var key in that.suicidi) {
             // for (var k in world.features) {
             //   const country = world.features[k].properties.name
             //   if (key === country) {
@@ -122,7 +127,7 @@ export default {
             //     console.log('Paese al momento non cè', key)
             //   }
             // }
-            data.set(key, this.suicidi[key])
+            data.set(key, that.suicidi[key])
           }
 
           const mouseOver = function (d) {
@@ -164,19 +169,19 @@ export default {
           }
 
           // Draw the map
-          svg.append('g')
+          that.svg.append('g')
             .selectAll('path')
             .data(world.features)
             .enter()
             .append('path')
             // draw each country
-            .attr('d', path
-              .projection(projection)
+            .attr('d', that.path
+              .projection(that.projection)
             )
             // set the color of each country
             .attr('fill', function (d) {
               d.total = data.get(d.properties.name) || 0
-              return colorScale(d.total)
+              return that.colorScale(d.total)
             })
             .style('stroke', 'transparent')
             .attr('class', function (d) { return 'Country' })
@@ -186,7 +191,7 @@ export default {
             .on('mousemove', mouseMove)
           // Draw the legend
           var size = 20
-          svg.selectAll('mydots')
+          that.svg.selectAll('mydots')
             .data(keys)
             .enter()
             .append('rect')
@@ -195,7 +200,7 @@ export default {
             .attr('width', size)
             .attr('height', size)
             .style('fill', function (d) { return color(d) })
-          svg.selectAll('mylabels')
+          that.svg.selectAll('mylabels')
             .data(keys)
             .enter()
             .append('text')
@@ -208,6 +213,22 @@ export default {
         })
 
       this.visible = false
+    },
+    updateMap () {
+      var that = this
+
+      var data = d3.map()
+      for (var key in that.suicidi) {
+        data.set(key, that.suicidi[key])
+      }
+
+      that.svg.selectAll('path')
+        .attr('fill', function (d) {
+          console.log('sulla mappa', d.properties.name)
+          console.log('dalla query', data.get(d.properties.name))
+          d.total = data.get(d.properties.name) || 0
+          return that.colorScale(d.total)
+        })
     }
   }
 }
