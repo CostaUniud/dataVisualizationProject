@@ -63,7 +63,6 @@ export default {
   },
   watch: {
     fieldYear: async function () {
-      console.log(this.fieldYear)
       await this.getSuicidiFromDb(this.fieldYear)
         .then(response => {
           this.updateMap()
@@ -118,15 +117,6 @@ export default {
       await d3.json('/statics/suicide/world.json')
         .then(world => {
           for (var key in that.suicidi) {
-            // for (var k in world.features) {
-            //   const country = world.features[k].properties.name
-            //   if (key === country) {
-            //     console.log(key + ' cè')
-            //     break
-            //   } else {
-            //     console.log('Paese al momento non cè', key)
-            //   }
-            // }
             data.set(key, that.suicidi[key])
           }
 
@@ -163,7 +153,7 @@ export default {
             tooltip.transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip.html(d.properties.name + '<br>' + d.total)
+            tooltip.html(d.properties.name + '<br>' + (d.total === 0 ? 'No data' : d.total))
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
           }
@@ -181,6 +171,9 @@ export default {
             // set the color of each country
             .attr('fill', function (d) {
               d.total = data.get(d.properties.name) || 0
+              if (d.total === 0) {
+                return 'gray'
+              }
               return that.colorScale(d.total)
             })
             .style('stroke', 'transparent')
@@ -224,9 +217,10 @@ export default {
 
       that.svg.selectAll('path')
         .attr('fill', function (d) {
-          console.log('sulla mappa', d.properties.name)
-          console.log('dalla query', data.get(d.properties.name))
           d.total = data.get(d.properties.name) || 0
+          if (d.total === 0) {
+            return 'gray'
+          }
           return that.colorScale(d.total)
         })
     }
