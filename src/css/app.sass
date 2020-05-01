@@ -1,9 +1,17 @@
 // app global css in Sass form
 
-@font-face
-  font-family: 'Jost'
-  src: url('fonts/Jost-VariableFont_ital,wght.ttf')
+@import "abstract/functions"
+@import "abstract/mixins"
+@import "abstract/variables"
 
-body
-  font-family: 'Jost', sans-serif
-  font-weight: 400
+@import "base/animations"
+@import "base/base"
+@import "base/typography"
+@import "base/utilities"
+
+@import "layout/aside"
+@import "layout/footer"
+@import "layout/header"
+@import "layout/navigation"
+
+@import "pages/home"

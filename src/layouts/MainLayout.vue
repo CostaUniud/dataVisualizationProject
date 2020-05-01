@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar>
         <q-toolbar-title>
-          Visual language for complex systems's project - University of Udine
+          <h2 class="heading-secondary">Visual language for complex systems's project - University of Udine</h2>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

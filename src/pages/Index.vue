@@ -16,18 +16,18 @@
         </q-item>
       </template>
     </q-virtual-scroll> -->
-    <main>
-      <div>
-        <div id="map"></div>
-        <q-inner-loading :showing="visible">
-          <q-spinner-ball color="primary" size="10em"/>
-        </q-inner-loading>
+    <section class="map-area">
+      <div id="map"></div>
+      <q-inner-loading :showing="visible">
+        <q-spinner-ball color="primary" size="10em"/>
+      </q-inner-loading>
+    </section>
+    <aside v-if="!visible">
+      <div class="range__field">
+        <p class="range__field--label">1986</p>
+        <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
+        <p class="range__field--label">2016</p>
       </div>
-    </main>
-    <aside>
-      <p>1986</p>
-      <q-slider v-if="!visible" v-model="fieldYear" :min="1986" :max="2016" vertical label />
-      <p>2016</p>
     </aside>
   </q-page>
 </template>
@@ -105,7 +105,7 @@ export default {
       // Data and color scale
       var data = d3.map()
       that.colorScale = d3.scaleThreshold()
-        .domain([5, 10, 15])
+        .domain([1, 5, 10, 15])
         .range(d3.schemeReds[7])
       // Tooltip
       var tooltip = d3.select('#map')
@@ -113,7 +113,7 @@ export default {
         .attr('class', 'tooltip')
         .style('opacity', 0)
       // Legend
-      var keys = ['< 5.0', '5.0 - 9.9', '10.0 - 14.9', '≥ 15.0']
+      var keys = ['No data', '< 5.0', '5.0 - 9.9', '10.0 - 14.9', '≥ 15.0']
       var color = d3.scaleOrdinal()
         .domain(keys)
         .range(d3.schemeReds[7])
@@ -157,7 +157,7 @@ export default {
             tooltip.transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip.html(d.properties.name + '<br>' + (d.total === 0 ? 'No data' : d.total))
+            tooltip.html('<span>' + d.properties.name + '</span><br><span>' + (d.total === 0 ? 'No data' : d.total) + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
           }
@@ -175,9 +175,6 @@ export default {
             // set the color of each country
             .attr('fill', function (d) {
               d.total = data.get(d.properties.name) || 0
-              if (d.total === 0) {
-                return 'gray'
-              }
               return that.colorScale(d.total)
             })
             .style('stroke', 'transparent')
@@ -222,29 +219,9 @@ export default {
       that.svg.selectAll('path')
         .attr('fill', function (d) {
           d.total = data.get(d.properties.name) || 0
-          if (d.total === 0) {
-            return 'gray'
-          }
           return that.colorScale(d.total)
         })
     }
   }
 }
 </script>
-
-<style lang="sass">
-aside
-  text-align: center
-  position: fixed
-  right: 5vw
-  .q-slider
-    height: 80vh
-.tooltip
-  display: block-inline
-  position: absolute
-  text-align: center
-  padding: 7px
-  font: 12px sans-serif
-  background: #fff
-  pointer-events: none
-</style>
