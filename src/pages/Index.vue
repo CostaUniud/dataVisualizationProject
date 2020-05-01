@@ -18,13 +18,17 @@
     </q-virtual-scroll> -->
     <main>
       <div>
-        <q-slider v-if="!visible" v-model="fieldYear" :min="1986" :max="2016"/>
         <div id="map"></div>
         <q-inner-loading :showing="visible">
           <q-spinner-ball color="primary" size="10em"/>
         </q-inner-loading>
       </div>
     </main>
+    <aside>
+      <p>1986</p>
+      <q-slider v-if="!visible" v-model="fieldYear" :min="1986" :max="2016" vertical label />
+      <p>2016</p>
+    </aside>
   </q-page>
 </template>
 
@@ -229,6 +233,12 @@ export default {
 </script>
 
 <style lang="sass">
+aside
+  text-align: center
+  position: fixed
+  right: 5vw
+  .q-slider
+    height: 80vh
 .tooltip
   display: block-inline
   position: absolute
