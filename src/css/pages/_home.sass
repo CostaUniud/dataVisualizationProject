@@ -1,17 +1,41 @@
 // Mappa
-svg
-  // Etichette della leggenda
-  text
-    alignment-baseline: central !important
+.map-area
+  margin-top: 2rem
+  .map-area__description
+    width: 38rem
+    margin-top: 5rem
+    .map-area__description-year
+      text-align: center
+      font-weight: bold
+      font-size: 4rem
+    .map-area__description-table
+      width: 38rem
+      margin: 0 2rem
+  svg
+    // Etichette della leggenda
+    text
+      alignment-baseline: central !important
 
-.tooltip
-  display: inline-block
-  position: absolute
-  text-align: center
-  padding: .7rem
-  font: 1.6rem
-  background: #fff
-  pointer-events: none
-  span:first-child
-    font-weight: bold
-    
+  .tooltip
+    display: inline-block
+    position: absolute
+    text-align: center
+    padding: .7rem
+    font: 1.6rem
+    background: #fff
+    pointer-events: none
+    span:first-child
+      font-weight: bold
+
+  .range-field
+    text-align: center
+    position: absolute
+    top: 2rem
+    right: 5rem
+    .range-field__label
+      font-weight: bold
+      font-size: 2rem
+    .q-slider
+      height: 80vh
+      margin-bottom: 1.6rem
+      

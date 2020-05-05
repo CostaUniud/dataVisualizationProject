@@ -1,34 +1,43 @@
 <template>
-  <q-page class="flex flex-center">
-    <!-- <q-virtual-scroll
-      style="max-height: 90vh"
-      :virtual-scroll-item-size="48"
-      :virtual-scroll-sticky-size-start="48"
-      :virtual-scroll-sticky-size-end="32"
-      :items="listSuicidi"
-      separator>
-      <template v-slot="{ item, index }">
-        <q-item :key="index" v-if="item.country === 'Albania'">
-          <q-item-section>
-            <q-item-label>{{ item.country }}</q-item-label>
-            <q-item-label>{{ item.year }}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </template>
-    </q-virtual-scroll> -->
+  <q-page class="flex">
     <section class="map-area">
-      <div id="map"></div>
-      <q-inner-loading :showing="visible">
-        <q-spinner-ball color="primary" size="10em"/>
-      </q-inner-loading>
-    </section>
-    <aside v-if="!visible">
-      <div class="range__field">
-        <p class="range__field--label">1986</p>
-        <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
-        <p class="range__field--label">2016</p>
+      <div class="row">
+        <div class="col-2">
+          <div class="map-area__description" v-if="!visible">
+            <p class="map-area__description-year">{{ fieldYear }}</p>
+            <q-table
+              ref="myTable"
+              class="map-area__description-table"
+              :data="dataTable"
+              :columns="columns"
+              row-key="country"
+              :rows-per-page-options="[0]"
+              :pagination.sync="pagination"
+              flat
+            >
+              <template v-slot:header-cell="props">
+                <q-th :props="props">
+                  <b class="text-weight-bold text-h5">{{ props.col.label }}</b>
+                </q-th>
+              </template>
+            </q-table>
+          </div>
+        </div>
+        <div class="col-9">
+          <div id="map"></div>
+          <q-inner-loading :showing="visible">
+            <q-spinner-ball color="primary" size="10em"/>
+          </q-inner-loading>
+        </div>
+        <div class="col-1">
+          <div class="range-field" v-if="!visible">
+            <p class="range-field__label">1986</p>
+            <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
+            <p class="range-field__label">2016</p>
+          </div>
+        </div>
       </div>
-    </aside>
+    </section>
   </q-page>
 </template>
 
@@ -40,7 +49,6 @@ export default {
   name: 'Index',
   data () {
     return {
-      listSuicidi: [],
       visible: false,
       fieldYear: 1986,
       width: 1400,
@@ -48,7 +56,16 @@ export default {
       svg: null,
       path: null,
       projection: null,
-      colorScale: null
+      colorScale: null,
+      columns: [
+        { name: 'country', align: 'left', label: 'Country', field: 'country', sortable: true },
+        { name: 'rate', label: 'Rate (suicides/100k)', field: 'rate', sortable: true }
+      ],
+      dataTable: [],
+      pagination: {
+        page: 1,
+        rowsPerPage: 7
+      }
     }
   },
   async beforeMount () {
@@ -121,6 +138,10 @@ export default {
       await d3.json('/statics/suicide/world.json')
         .then(world => {
           for (var key in that.suicidi) {
+            that.dataTable.push({
+              country: key,
+              rate: that.suicidi[key]
+            })
             data.set(key, that.suicidi[key])
           }
 
@@ -210,9 +231,14 @@ export default {
     },
     updateMap () {
       var that = this
-
       var data = d3.map()
+      that.dataTable = []
+
       for (var key in that.suicidi) {
+        that.dataTable.push({
+          country: key,
+          rate: that.suicidi[key]
+        })
         data.set(key, that.suicidi[key])
       }
 
@@ -221,6 +247,8 @@ export default {
           d.total = data.get(d.properties.name) || 0
           return that.colorScale(d.total)
         })
+
+      this.$refs.myTable.pagination.page = 1
     }
   }
 }
