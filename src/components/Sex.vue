@@ -1,7 +1,5 @@
 <template>
-  <section class="pie-area">
-    <div id="pie"></div>
-  </section>
+  <div id="pie"></div>
 </template>
 
 <script>
@@ -9,7 +7,7 @@ import { mapGetters, mapActions } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
-  name: 'Pie',
+  name: 'PieSex',
   props: {
     fieldYear: Number
   },
@@ -19,15 +17,18 @@ export default {
       radius: null
     }
   },
-  mounted () {
-    this.getSexFromDb(1986)
-      .then(response => {
-        this.pie()
-      })
+  async mounted () {
+    var that = this
+    setTimeout(async function () {
+      await that.getSexFromDb(1986)
+        .then(response => {
+          that.pie()
+        })
+    }, 1000)
   },
   watch: {
-    fieldYear: function () {
-      this.getSexFromDb(this.fieldYear)
+    fieldYear: async function () {
+      await this.getSexFromDb(this.fieldYear)
         .then(response => {
           this.pieUpdate()
         })

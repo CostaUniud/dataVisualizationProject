@@ -8,14 +8,17 @@
         <p class="range-field__label">2016</p>
       </div>
     </aside>
-    <Pie :fieldYear="fieldYear"/>
+    <section class="pie-area">
+      <PieSex :fieldYear="fieldYear"/>
+      <PieAge :fieldYear="fieldYear"/>
+    </section>
   </q-page>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
 import Map from '@/components/Map.vue'
-import Pie from '@/components/Pie.vue'
+import PieSex from '@/components/Sex.vue'
+import PieAge from '@/components/Age.vue'
 
 export default {
   name: 'Index',
@@ -26,21 +29,12 @@ export default {
   },
   components: {
     Map,
-    Pie
-  },
-  async beforeMount () {
-    await this.start()
-      .then(async response => {
-        await this.init()
-      })
+    PieSex,
+    PieAge
   },
   computed: {
   },
   methods: {
-    ...mapActions({
-      start: 'db/start',
-      init: 'suicidi/init'
-    })
   }
 }
 </script>

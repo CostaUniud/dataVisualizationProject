@@ -61,13 +61,16 @@ export default {
       }
     }
   },
-  mounted () {
+  async mounted () {
     // this.visible = true
+    var that = this
 
-    this.getSuicidiFromDb(1986)
-      .then(response => {
-        this.mappa()
-      })
+    setTimeout(async function () {
+      await that.getSuicidiFromDb(1986)
+        .then(async response => {
+          await that.mappa()
+        })
+    }, 1000)
   },
   watch: {
     fieldYear: async function () {

@@ -3,7 +3,8 @@ import store from '@/store'
 
 const state = {
   suicidi: null,
-  sex: null
+  sex: null,
+  age: null
 }
 
 const getters = {
@@ -14,6 +15,10 @@ const getters = {
   getSex (state) {
     // console.log('getSex', state.sex)
     return state.sex
+  },
+  getAge (state) {
+    // console.log('getAge', state.age)
+    return state.age
   }
 }
 
@@ -25,6 +30,10 @@ const mutations = {
   setSex (state, value) {
     // console.log('setSex', value)
     state.sex = value
+  },
+  setAge (state, value) {
+    // console.log('setAge', value)
+    state.age = value
   }
 }
 
@@ -33,7 +42,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       store.dispatch('db/open')
         .then(async db => {
-          db.transaction(function (tx) {
+          await db.transaction(function (tx) {
             tx.executeSql(`CREATE TABLE IF NOT EXISTS suicidi (
                             id INTEGER PRIMARY KEY,
                             country TEXT,
@@ -104,8 +113,8 @@ const actions = {
   updateDb () {
     return new Promise((resolve, reject) => {
       store.dispatch('db/open')
-        .then(db => {
-          db.transaction(function (tx) {
+        .then(async db => {
+          await db.transaction(function (tx) {
             tx.executeSql(`UPDATE suicidi
                             SET country = 'Russia'
                             WHERE country = 'Russian Federation'
@@ -163,13 +172,6 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
-            // await actions.updateCountry()
-            //   .then(response => {
-            //     resolve(true)
-            //   })
-            //   .catch(error => {
-            //     reject(error)
-            //   })
             resolve(true)
           })
         })
@@ -220,6 +222,34 @@ const actions = {
                   sex[resultSet.rows.item(r).sex] = resultSet.rows.item(r).somma_suicidi
                 }
                 context.commit('setSex', sex)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getAgeFromDb (context, year) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT age, SUM(suicidi.suicides) AS somma_suicidi
+              FROM suicidi
+              WHERE year = ?
+              GROUP BY age`,
+              [year],
+              function (tx, resultSet) {
+                const age = {}
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  age[resultSet.rows.item(r).age] = resultSet.rows.item(r).somma_suicidi
+                }
+                context.commit('setAge', age)
               }, function (error) {
                 reject(error)
               })
