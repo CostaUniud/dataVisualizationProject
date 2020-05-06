@@ -2,7 +2,7 @@
   <section class="map-area">
     <div class="row">
       <div class="col-2">
-        <div class="map-area__description" v-if="!visible">
+        <div class="map-area__description"> <!-- v-if="!visible" -->
           <p class="map-area__description-year">{{ fieldYear }}</p>
           <q-table
             ref="myTable"
@@ -24,16 +24,9 @@
       </div>
       <div class="col-9">
         <div id="map"></div>
-        <q-inner-loading :showing="visible">
+        <!-- <q-inner-loading :showing="visible">
           <q-spinner-ball color="primary" size="10em"/>
-        </q-inner-loading>
-      </div>
-      <div class="col-1">
-        <div class="range-field" v-if="!visible">
-          <p class="range-field__label">1986</p>
-          <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
-          <p class="range-field__label">2016</p>
-        </div>
+        </q-inner-loading> -->
       </div>
     </div>
   </section>
@@ -45,10 +38,12 @@ import * as d3 from 'd3'
 
 export default {
   name: 'Map',
+  props: {
+    fieldYear: Number
+  },
   data () {
     return {
-      visible: false,
-      fieldYear: 1986,
+      // visible: false,
       width: 1400,
       height: 800,
       svg: null,
@@ -66,10 +61,10 @@ export default {
       }
     }
   },
-  async mounted () {
-    this.visible = true
+  mounted () {
+    // this.visible = true
 
-    await this.getSuicidiFromDb(1986)
+    this.getSuicidiFromDb(1986)
       .then(response => {
         this.mappa()
       })
@@ -214,7 +209,7 @@ export default {
             .style('alignment-baseline', 'middle')
         })
 
-      this.visible = false
+      // this.visible = false
     },
     updateMap () {
       var that = this

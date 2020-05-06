@@ -1,7 +1,14 @@
 <template>
   <q-page class="flex">
-    <Map/>
-    <Pie/>
+    <Map :fieldYear="fieldYear"/>
+    <aside>
+      <div class="range-field"> <!-- v-if="!visible" -->
+        <p class="range-field__label">1986</p>
+        <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
+        <p class="range-field__label">2016</p>
+      </div>
+    </aside>
+    <Pie :fieldYear="fieldYear"/>
   </q-page>
 </template>
 
@@ -14,6 +21,7 @@ export default {
   name: 'Index',
   data () {
     return {
+      fieldYear: 1986
     }
   },
   components: {

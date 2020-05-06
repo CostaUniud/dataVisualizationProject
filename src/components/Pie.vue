@@ -10,15 +10,28 @@ import * as d3 from 'd3'
 
 export default {
   name: 'Pie',
+  props: {
+    fieldYear: Number
+  },
   data () {
     return {
+      svg: null,
+      radius: null
     }
   },
-  async mounted () {
-    await this.getSexFromDb(1986)
+  mounted () {
+    this.getSexFromDb(1986)
       .then(response => {
         this.pie()
       })
+  },
+  watch: {
+    fieldYear: function () {
+      this.getSexFromDb(this.fieldYear)
+        .then(response => {
+          this.pieUpdate()
+        })
+    }
   },
   computed: {
     ...mapGetters({
@@ -36,10 +49,10 @@ export default {
       var margin = 40
 
       // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-      var radius = Math.min(width, height) / 2 - margin
+      this.radius = Math.min(width, height) / 2 - margin
 
-      // append the svg object to the div called 'my_dataviz'
-      var svg = d3.select('#pie')
+      // append the svg object to the div called 'pie'
+      this.svg = d3.select('#pie')
         .append('svg')
         .attr('width', width)
         .attr('height', height)
@@ -52,7 +65,7 @@ export default {
       // set the color scale
       var color = d3.scaleOrdinal()
         .domain(data)
-        .range(['#98abc5', '#8a89a6', '#7b6888', '#6b486b', '#a05d56'])
+        .range(['#05B2DC', '#D72483'])
 
       // Compute the position of each group on the pie:
       var pie = d3.pie()
@@ -60,19 +73,40 @@ export default {
       var dataReady = pie(d3.entries(data))
 
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-      svg
-        .selectAll('whatever')
+      this.svg.selectAll('whatever')
         .data(dataReady)
         .enter()
         .append('path')
         .attr('d', d3.arc()
           .innerRadius(0)
-          .outerRadius(radius)
+          .outerRadius(this.radius)
         )
         .attr('fill', function (d) { return (color(d.data.key)) })
-        .attr('stroke', 'black')
-        .style('stroke-width', '2px')
-        .style('opacity', 0.7)
+    },
+    pieUpdate () {
+      // Create dummy data
+      var data = { a: this.sex.male, b: this.sex.female }
+
+      // set the color scale
+      var color = d3.scaleOrdinal()
+        .domain(data)
+        .range(['#05B2DC', '#D72483'])
+
+      // Compute the position of each group on the pie:
+      var pie = d3.pie()
+        .value(function (d) { return d.value })
+      var dataReady = pie(d3.entries(data))
+
+      // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+      this.svg.selectAll('whatever')
+        .data(dataReady)
+        .enter()
+        .append('path')
+        .attr('d', d3.arc()
+          .innerRadius(0)
+          .outerRadius(this.radius)
+        )
+        .attr('fill', function (d) { return (color(d.data.key)) })
     }
   }
 }
