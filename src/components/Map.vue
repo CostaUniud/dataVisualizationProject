@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
@@ -66,16 +66,12 @@ export default {
       }
     }
   },
-  async beforeMount () {
+  async mounted () {
     this.visible = true
-    var p1 = await this.start()
-    var p2 = await this.init()
-    Promise.all([p1, p2])
-      .then(async values => {
-        await this.getSuicidiFromDb(1986)
-          .then(response => {
-            this.mappa()
-          })
+
+    await this.getSuicidiFromDb(1986)
+      .then(response => {
+        this.mappa()
       })
   },
   watch: {
@@ -92,12 +88,7 @@ export default {
     })
   },
   methods: {
-    ...mapMutations({
-      setSuicidi: 'suicidi/setSuicidi'
-    }),
     ...mapActions({
-      start: 'db/start',
-      init: 'suicidi/init',
       getSuicidiFromDb: 'suicidi/getSuicidiFromDb'
     }),
     async mappa () {

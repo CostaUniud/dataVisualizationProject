@@ -12,7 +12,7 @@ const getters = {
     return state.suicidi
   },
   getSex (state) {
-    console.log('getSex', state.sex)
+    // console.log('getSex', state.sex)
     return state.sex
   }
 }
@@ -23,7 +23,7 @@ const mutations = {
     state.suicidi = value
   },
   setSex (state, value) {
-    console.log('setSex', value)
+    // console.log('setSex', value)
     state.sex = value
   }
 }
