@@ -2,13 +2,18 @@ import * as d3 from 'd3'
 import store from '@/store'
 
 const state = {
-  suicidi: null
+  suicidi: null,
+  sex: null
 }
 
 const getters = {
   getSuicidi (state) {
     // console.log('getSuicidi', state.suicidi)
     return state.suicidi
+  },
+  getSex (state) {
+    console.log('getSex', state.sex)
+    return state.sex
   }
 }
 
@@ -16,6 +21,10 @@ const mutations = {
   setSuicidi (state, value) {
     // console.log('setSuicidi', value)
     state.suicidi = value
+  },
+  setSex (state, value) {
+    console.log('setSex', value)
+    state.sex = value
   }
 }
 
@@ -183,6 +192,34 @@ const actions = {
                   suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000) * 10) / 10
                 }
                 context.commit('setSuicidi', suicidi)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getSexFromDb (context, year) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT sex, SUM(suicidi.suicides) AS somma_suicidi
+              FROM suicidi
+              WHERE year = ?
+              GROUP BY sex`,
+              [year],
+              function (tx, resultSet) {
+                const sex = {}
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  sex[resultSet.rows.item(r).sex] = resultSet.rows.item(r).somma_suicidi
+                }
+                context.commit('setSex', sex)
               }, function (error) {
                 reject(error)
               })
