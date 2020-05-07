@@ -1,5 +1,5 @@
 <template>
-  <div id="pie"></div>
+  <div id="pie-sex"></div>
 </template>
 
 <script>
@@ -53,7 +53,7 @@ export default {
       this.radius = Math.min(width, height) / 2 - margin
 
       // append the svg object to the div called 'pie'
-      this.svg = d3.select('#pie')
+      this.svg = d3.select('#pie-sex')
         .append('svg')
         .attr('width', width)
         .attr('height', height)

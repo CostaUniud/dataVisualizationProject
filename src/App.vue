@@ -10,7 +10,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'App',
   async beforeMount () {
-    this.$q.loading.show({ message: 'Dando un senso ai dati...' })
+    this.$q.loading.show({ message: 'Fetch data...' })
     await this.start()
     await this.init()
       .finally(() => {

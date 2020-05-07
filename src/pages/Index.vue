@@ -9,8 +9,17 @@
       </div>
     </aside>
     <section class="pie-area">
-      <PieSex :fieldYear="fieldYear"/>
-      <PieAge :fieldYear="fieldYear"/>
+      <div class="row">
+        <div class="col-1">
+          800.000
+        </div>
+        <div class="col-1 offset-md-2">
+          <PieSex :fieldYear="fieldYear"/>
+        </div>
+        <div class="col-1 offset-md-4">
+          <PieAge :fieldYear="fieldYear"/>
+        </div>
+      </div>
     </section>
   </q-page>
 </template>
