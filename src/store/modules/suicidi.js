@@ -4,7 +4,8 @@ import store from '@/store'
 const state = {
   suicidi: null,
   sex: null,
-  age: null
+  age: null,
+  tot: null
 }
 
 const getters = {
@@ -19,6 +20,10 @@ const getters = {
   getAge (state) {
     // console.log('getAge', state.age)
     return state.age
+  },
+  getTot (state) {
+    // console.log('getTot', state.tot)
+    return state.tot
   }
 }
 
@@ -34,6 +39,10 @@ const mutations = {
   setAge (state, value) {
     // console.log('setAge', value)
     state.age = value
+  },
+  setTot (state, value) {
+    console.log('setTot', value)
+    state.tot = value
   }
 }
 
@@ -250,6 +259,29 @@ const actions = {
                   age[resultSet.rows.item(r).age] = resultSet.rows.item(r).somma_suicidi
                 }
                 context.commit('setAge', age)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getTotSuicFromDb (context, year) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT SUM(suicidi.suicides) AS somma_suicidi
+              FROM suicidi
+              WHERE year = ?`,
+              [year],
+              function (tx, resultSet) {
+                context.commit('setTot', resultSet.rows.item(0).somma_suicidi)
               }, function (error) {
                 reject(error)
               })

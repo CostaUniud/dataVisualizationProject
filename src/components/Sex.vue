@@ -52,6 +52,12 @@ export default {
       // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
       this.radius = Math.min(width, height) / 2 - margin
 
+      // Legend
+      var keys = ['Male', 'Female']
+      var colorLegend = d3.scaleOrdinal()
+        .domain(keys)
+        .range(['#05B2DC', '#D72483'])
+
       // append the svg object to the div called 'pie'
       this.svg = d3.select('#pie-sex')
         .append('svg')
@@ -83,6 +89,28 @@ export default {
           .outerRadius(this.radius)
         )
         .attr('fill', function (d) { return (color(d.data.key)) })
+
+      // Draw the legend
+      var size = 20
+      this.svg.selectAll('mydots')
+        .data(keys)
+        .enter()
+        .append('rect')
+        .attr('x', 200)
+        .attr('y', function (d, i) { return i * (size + 5) })
+        .attr('width', size)
+        .attr('height', size)
+        .style('fill', function (d) { return colorLegend(d) })
+      this.svg.selectAll('mylabels')
+        .data(keys)
+        .enter()
+        .append('text')
+        .attr('x', 200 + size * 1.2)
+        .attr('y', function (d, i) { return i * (size + 5) + (size / 2) })
+        .style('fill', 'black')
+        .text(function (d) { return d })
+        .attr('text-anchor', 'left')
+        .style('alignment-baseline', 'middle')
     },
     pieUpdate () {
       // Create dummy data

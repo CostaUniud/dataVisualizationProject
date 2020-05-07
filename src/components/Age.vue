@@ -53,6 +53,12 @@ export default {
       // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
       this.radius = Math.min(width, height) / 2 - margin
 
+      // Legend
+      var keys = ['5-14 years', '15-24 years', '25-34 years', '35-54 years', '55-74 years', '75+ years']
+      var colorLegend = d3.scaleOrdinal()
+        .domain(keys)
+        .range(d3.schemeTableau10)
+
       // append the svg object to the div called 'pie'
       this.svg = d3.select('#pie-age')
         .append('svg')
@@ -84,6 +90,28 @@ export default {
           .outerRadius(this.radius)
         )
         .attr('fill', function (d) { return (color(d.data.key)) })
+
+      // Draw the legend
+      var size = 20
+      this.svg.selectAll('mydots')
+        .data(keys)
+        .enter()
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', function (d, i) { return i * (size + 5) })
+        .attr('width', size)
+        .attr('height', size)
+        .style('fill', function (d) { return colorLegend(d) })
+      this.svg.selectAll('mylabels')
+        .data(keys)
+        .enter()
+        .append('text')
+        .attr('x', 0 + size * 1.2)
+        .attr('y', function (d, i) { return i * (size + 5) + (size / 2) })
+        .style('fill', 'black')
+        .text(function (d) { return d })
+        .attr('text-anchor', 'left')
+        .style('alignment-baseline', 'middle')
     },
     pieUpdate () {
       // Create dummy data
