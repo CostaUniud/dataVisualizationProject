@@ -13,7 +13,7 @@
         <div class="flex col-1 justify-center content-center offset-md-2">
           <p>{{ formatMoney(tot) }}</p>
         </div>
-        <div class="col-1 offset-md-2">
+        <div class="col-1 offset-md-1">
           <PieSex :fieldYear="fieldYear"/>
         </div>
         <div class="col-1 offset-md-4">

@@ -14,7 +14,8 @@ export default {
   data () {
     return {
       svg: null,
-      radius: null
+      radius: null,
+      tooltip: null
     }
   },
   async mounted () {
@@ -44,19 +45,39 @@ export default {
       getSexFromDb: 'suicidi/getSexFromDb'
     }),
     pie () {
+      var that = this
       // set the dimensions and margins of the graph
-      var width = 450
-      var height = 450
-      var margin = 40
+      var width = 600
+      var height = 570
+      var margin = 90
 
       // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
       this.radius = Math.min(width, height) / 2 - margin
-
+      // Tooltip
+      this.tooltip = d3.select('#pie-sex')
+        .append('div')
+        .attr('class', 'tooltip-pie')
+        .style('opacity', 0)
       // Legend
       var keys = ['Male', 'Female']
       var colorLegend = d3.scaleOrdinal()
         .domain(keys)
         .range(['#05B2DC', '#D72483'])
+
+      const mouseLeave = function (d) {
+        that.tooltip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      }
+
+      const mouseMove = function (d) {
+        that.tooltip.transition()
+          .duration(200)
+          .style('opacity', 1)
+        that.tooltip.html('<span>' + Math.round((d.data.value / (that.sex.male + that.sex.female)) * 100) + '%</span>')
+          .style('left', (d3.event.pageX) + 'px')
+          .style('top', (d3.event.pageY - 30) + 'px')
+      }
 
       // append the svg object to the div called 'pie'
       this.svg = d3.select('#pie-sex')
@@ -80,7 +101,7 @@ export default {
       var dataReady = pie(d3.entries(data))
 
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-      this.svg.selectAll('whatever')
+      this.svg.selectAll('sex')
         .data(dataReady)
         .enter()
         .append('path')
@@ -89,6 +110,8 @@ export default {
           .outerRadius(this.radius)
         )
         .attr('fill', function (d) { return (color(d.data.key)) })
+        .on('mouseleave', mouseLeave)
+        .on('mousemove', mouseMove)
 
       // Draw the legend
       var size = 20
@@ -96,8 +119,8 @@ export default {
         .data(keys)
         .enter()
         .append('rect')
-        .attr('x', 200)
-        .attr('y', function (d, i) { return i * (size + 5) })
+        .attr('x', 230)
+        .attr('y', function (d, i) { return i * (size + 5) - 20 })
         .attr('width', size)
         .attr('height', size)
         .style('fill', function (d) { return colorLegend(d) })
@@ -105,14 +128,15 @@ export default {
         .data(keys)
         .enter()
         .append('text')
-        .attr('x', 200 + size * 1.2)
-        .attr('y', function (d, i) { return i * (size + 5) + (size / 2) })
+        .attr('x', 230 + size * 1.2)
+        .attr('y', function (d, i) { return i * (size + 5) + (size / 2) - 20 })
         .style('fill', 'black')
         .text(function (d) { return d })
         .attr('text-anchor', 'left')
         .style('alignment-baseline', 'middle')
     },
     pieUpdate () {
+      var that = this
       // Create dummy data
       var data = { a: this.sex.male, b: this.sex.female }
 
@@ -126,8 +150,23 @@ export default {
         .value(function (d) { return d.value })
       var dataReady = pie(d3.entries(data))
 
+      const mouseLeave = function (d) {
+        that.tooltip.transition()
+          .duration(500)
+          .style('opacity', 0)
+      }
+
+      const mouseMove = function (d) {
+        that.tooltip.transition()
+          .duration(200)
+          .style('opacity', 1)
+        that.tooltip.html('<span>' + Math.round((d.data.value / (that.sex.male + that.sex.female)) * 100) + '%</span>')
+          .style('left', (d3.event.pageX) + 'px')
+          .style('top', (d3.event.pageY - 30) + 'px')
+      }
+
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
-      this.svg.selectAll('whatever')
+      this.svg.selectAll('sex')
         .data(dataReady)
         .enter()
         .append('path')
@@ -136,6 +175,8 @@ export default {
           .outerRadius(this.radius)
         )
         .attr('fill', function (d) { return (color(d.data.key)) })
+        .on('mouseleave', mouseLeave)
+        .on('mousemove', mouseMove)
     }
   }
 }

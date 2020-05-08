@@ -41,7 +41,7 @@ const mutations = {
     state.age = value
   },
   setTot (state, value) {
-    console.log('setTot', value)
+    // console.log('setTot', value)
     state.tot = value
   }
 }
