@@ -5,7 +5,8 @@ const state = {
   suicidi: null,
   sex: null,
   age: null,
-  tot: null
+  tot: null,
+  suicidiCountry: null
 }
 
 const getters = {
@@ -24,6 +25,10 @@ const getters = {
   getTot (state) {
     // console.log('getTot', state.tot)
     return state.tot
+  },
+  getSuicidiCountry (state) {
+    // console.log('getSuicidiCountry', state.suicidiCountry)
+    return state.suicidiCountry
   }
 }
 
@@ -43,6 +48,10 @@ const mutations = {
   setTot (state, value) {
     // console.log('setTot', value)
     state.tot = value
+  },
+  setSuicidiCountry (state, value) {
+    // console.log('setSuicidiCountry', value)
+    state.suicidiCountry = value
   }
 }
 
@@ -200,7 +209,7 @@ const actions = {
               function (tx, resultSet) {
                 const suicidi = {}
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000) * 10) / 10
+                  suicidi[resultSet.rows.item(r).country] = Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000))
                 }
                 context.commit('setSuicidi', suicidi)
               }, function (error) {
@@ -282,6 +291,41 @@ const actions = {
               [year],
               function (tx, resultSet) {
                 context.commit('setTot', resultSet.rows.item(0).somma_suicidi)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getSuicidiCountryFromDb (context, country) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT year, SUM(suicidi.suicides) AS somma_suicidi
+              FROM suicidi
+              WHERE country = ?
+              GROUP BY year`,
+              [country],
+              function (tx, resultSet) {
+                const suicidi = []
+                // const suicidi = {}
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  suicidi.push(
+                    {
+                      y: resultSet.rows.item(r).year,
+                      n: resultSet.rows.item(r).somma_suicidi
+                    }
+                  )
+                  // suicidi[resultSet.rows.item(r).year] = resultSet.rows.item(r).somma_suicidi
+                }
+                context.commit('setSuicidiCountry', suicidi)
               }, function (error) {
                 reject(error)
               })

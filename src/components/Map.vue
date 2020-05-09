@@ -115,7 +115,7 @@ export default {
         .attr('class', 'tooltip')
         .style('opacity', 0)
       // Legend
-      var keys = ['No data', '< 5.0', '5.0 - 9.9', '10.0 - 14.9', '≥ 15.0']
+      var keys = ['No data', '< 5', '5 - 9', '10 - 14', '≥ 15']
       var color = d3.scaleOrdinal()
         .domain(keys)
         .range(d3.schemeReds[7])
