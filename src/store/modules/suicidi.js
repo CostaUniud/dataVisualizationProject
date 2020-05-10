@@ -6,7 +6,8 @@ const state = {
   sex: null,
   age: null,
   tot: null,
-  suicidiCountry: null
+  suicidiCountry: null,
+  country: null
 }
 
 const getters = {
@@ -29,6 +30,10 @@ const getters = {
   getSuicidiCountry (state) {
     // console.log('getSuicidiCountry', state.suicidiCountry)
     return state.suicidiCountry
+  },
+  getCountry (state) {
+    // console.log('getCountry', state.country)
+    return state.country
   }
 }
 
@@ -52,6 +57,10 @@ const mutations = {
   setSuicidiCountry (state, value) {
     // console.log('setSuicidiCountry', value)
     state.suicidiCountry = value
+  },
+  setCountry (state, value) {
+    // console.log('setCountry', value)
+    state.country = value
   }
 }
 
@@ -326,6 +335,32 @@ const actions = {
                   // suicidi[resultSet.rows.item(r).year] = resultSet.rows.item(r).somma_suicidi
                 }
                 context.commit('setSuicidiCountry', suicidi)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            resolve(true)
+          })
+        })
+    })
+  },
+  getCountryFromDb (context) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT DISTINCT country
+              FROM suicidi`,
+              [],
+              function (tx, resultSet) {
+                const country = []
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  country.push(resultSet.rows.item(r).country)
+                }
+                context.commit('setCountry', country)
               }, function (error) {
                 reject(error)
               })

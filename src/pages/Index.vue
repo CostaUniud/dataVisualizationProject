@@ -8,13 +8,13 @@
         <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
         <p class="range-field__label">2016</p>
       </div>
-      <div class="range-field" v-else>
-        <q-select v-model="fieldCountry" :options="options" label="Country"/>
+      <div class="country-field" v-else>
+        <q-select v-model="fieldCountry" :options="country" label="Country"/>
       </div>
     </aside>
     <section class="flex pie-area justify-center content-center">
       <div class="row">
-        <div class="flex col-1 justify-center content-center offset-md-2">
+        <div class="flex col-1 justify-center content-center offset-md-2" style="width: 10rem;">
           <p>{{ formatMoney(tot) }}</p>
         </div>
         <div class="col-1 offset-md-1">
@@ -27,7 +27,9 @@
     </section>
     <section class="flex line-area justify-center content-center">
       <div class="row">
-        <LineChart :fieldCountry="fieldCountry"/>
+        <div class="col-1 offset-md-6">
+          <LineChart :fieldCountry="fieldCountry"/>
+        </div>
       </div>
     </section>
   </q-page>
@@ -50,7 +52,7 @@ export default {
       fieldYear: 1986,
       model: null,
       options: [
-        'Albania', 'Italy'
+        'Albania'
       ],
       position: 0,
       fieldCountry: 'Albania'
@@ -68,6 +70,10 @@ export default {
     setTimeout(async function () {
       await that.getTotSuicFromDb(1986)
     }, 1000)
+
+    setTimeout(async function () {
+      await that.getCountryFromDb()
+    }, 2000)
   },
   watch: {
     fieldYear: async function () {
@@ -76,12 +82,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tot: 'suicidi/getTot'
+      tot: 'suicidi/getTot',
+      country: 'suicidi/getCountry'
     })
   },
   methods: {
     ...mapActions({
-      getTotSuicFromDb: 'suicidi/getTotSuicFromDb'
+      getTotSuicFromDb: 'suicidi/getTotSuicFromDb',
+      getCountryFromDb: 'suicidi/getCountryFromDb'
     }),
     formatMoney,
     scrollHandler () {
