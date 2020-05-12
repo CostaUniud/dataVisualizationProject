@@ -61,28 +61,21 @@ export default {
       }
     }
   },
-  async mounted () {
-    // this.visible = true
-    var that = this
-
-    setTimeout(async function () {
-      await that.getSuicidiFromDb(1986)
-        .then(async response => {
-          await that.mappa()
-        })
-    }, 1000)
-  },
   watch: {
     fieldYear: async function () {
       await this.getSuicidiFromDb(this.fieldYear)
         .then(response => {
           this.updateMap()
         })
+    },
+    dbUpdate: async function () {
+      await this.mappa()
     }
   },
   computed: {
     ...mapGetters({
-      suicidi: 'suicidi/getSuicidi'
+      suicidi: 'suicidi/getSuicidi',
+      dbUpdate: 'db/getDbUpdate'
     })
   },
   methods: {

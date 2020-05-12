@@ -23,26 +23,21 @@ export default {
       line: null
     }
   },
-  async mounted () {
-    var that = this
-    setTimeout(async function () {
-      await that.getSuicidiCountryFromDb('Albania')
-        .then(response => {
-          that.createLine()
-        })
-    }, 1000)
-  },
   watch: {
     fieldCountry: async function () {
       await this.getSuicidiCountryFromDb(this.fieldCountry)
         .then(response => {
           this.lineUpdate()
         })
+    },
+    dbUpdate: async function () {
+      this.createLine()
     }
   },
   computed: {
     ...mapGetters({
-      suicidiCountry: 'suicidi/getSuicidiCountry'
+      suicidiCountry: 'suicidi/getSuicidiCountry',
+      dbUpdate: 'db/getDbUpdate'
     })
   },
   methods: {

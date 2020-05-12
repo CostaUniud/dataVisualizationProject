@@ -64,16 +64,7 @@ export default {
     PieAge,
     LineChart
   },
-  async mounted () {
-    var that = this
-
-    setTimeout(async function () {
-      await that.getTotSuicFromDb(1986)
-    }, 1000)
-
-    setTimeout(async function () {
-      await that.getCountryFromDb()
-    }, 2000)
+  mounted () {
   },
   watch: {
     fieldYear: async function () {

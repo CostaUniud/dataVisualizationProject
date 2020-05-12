@@ -18,26 +18,21 @@ export default {
       tooltip: null
     }
   },
-  async mounted () {
-    var that = this
-    setTimeout(async function () {
-      await that.getSexFromDb(1986)
-        .then(response => {
-          that.pie()
-        })
-    }, 1000)
-  },
   watch: {
     fieldYear: async function () {
       await this.getSexFromDb(this.fieldYear)
         .then(response => {
           this.pieUpdate()
         })
+    },
+    dbUpdate: async function () {
+      this.pie()
     }
   },
   computed: {
     ...mapGetters({
-      sex: 'suicidi/getSex'
+      sex: 'suicidi/getSex',
+      dbUpdate: 'db/getDbUpdate'
     })
   },
   methods: {

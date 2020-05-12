@@ -121,6 +121,7 @@ const actions = {
               }, async function () {
                 await actions.updateDb()
                   .then(response => {
+                    // console.log('init+update fatto')
                     resolve(true)
                   })
                   .catch(error => {
@@ -227,6 +228,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getSuicidiFromDb fatto')
             resolve(true)
           })
         })
@@ -255,6 +257,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getSexFromDb fatto')
             resolve(true)
           })
         })
@@ -283,6 +286,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getAgeFromDb fatto')
             resolve(true)
           })
         })
@@ -306,6 +310,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getTotSuicFromDb fatto')
             resolve(true)
           })
         })
@@ -324,7 +329,6 @@ const actions = {
               [country],
               function (tx, resultSet) {
                 const suicidi = []
-                // const suicidi = {}
                 for (let r = 0; r < resultSet.rows.length; r++) {
                   suicidi.push(
                     {
@@ -332,7 +336,6 @@ const actions = {
                       n: resultSet.rows.item(r).somma_suicidi
                     }
                   )
-                  // suicidi[resultSet.rows.item(r).year] = resultSet.rows.item(r).somma_suicidi
                 }
                 context.commit('setSuicidiCountry', suicidi)
               }, function (error) {
@@ -341,6 +344,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getSuicidiCountryFromDb fatto')
             resolve(true)
           })
         })
@@ -367,6 +371,7 @@ const actions = {
           }, function (error) {
             reject(error)
           }, function () {
+            // console.log('getCountryFromDb fatto')
             resolve(true)
           })
         })

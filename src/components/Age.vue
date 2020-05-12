@@ -18,27 +18,21 @@ export default {
       tooltip: null
     }
   },
-  async mounted () {
-    var that = this
-
-    setTimeout(async function () {
-      await that.getAgeFromDb(1986)
-        .then(response => {
-          that.pie()
-        })
-    }, 1000)
-  },
   watch: {
     fieldYear: async function () {
       await this.getAgeFromDb(this.fieldYear)
         .then(response => {
           this.pieUpdate()
         })
+    },
+    dbUpdate: async function () {
+      this.pie()
     }
   },
   computed: {
     ...mapGetters({
-      age: 'suicidi/getAge'
+      age: 'suicidi/getAge',
+      dbUpdate: 'db/getDbUpdate'
     })
   },
   methods: {
