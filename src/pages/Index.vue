@@ -32,6 +32,13 @@
         </div>
       </div>
     </section>
+    <section class="flex line-area justify-center content-center">
+      <div class="row">
+        <div class="col-1 offset-md-6">
+          <Scatter/>
+        </div>
+      </div>
+    </section>
   </q-page>
 </template>
 
@@ -42,6 +49,7 @@ import Map from '@/components/Map.vue'
 import PieSex from '@/components/Sex.vue'
 import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
+import Scatter from '@/components/Scatter.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget, getScrollPosition } = scroll // setScrollPosition
 
@@ -62,7 +70,8 @@ export default {
     Map,
     PieSex,
     PieAge,
-    LineChart
+    LineChart,
+    Scatter
   },
   mounted () {
   },

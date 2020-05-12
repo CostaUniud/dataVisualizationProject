@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import db from './modules/db'
 import suicidi from './modules/suicidi'
+import happyness from './modules/happyness'
 
 Vue.use(Vuex)
 
@@ -18,7 +19,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     db,
-    suicidi
+    suicidi,
+    happyness
   },
 
   // enable strict mode (adds overhead!)
