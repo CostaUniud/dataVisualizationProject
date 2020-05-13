@@ -32,7 +32,7 @@
         </div>
       </div>
     </section>
-    <section class="flex line-area justify-center content-center">
+    <section class="flex justify-center content-center">
       <div class="row">
         <div class="col-1 offset-md-6">
           <Scatter/>
