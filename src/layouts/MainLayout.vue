@@ -3,7 +3,8 @@
     <q-header>
       <q-toolbar>
         <q-toolbar-title>
-          <h2 class="heading-secondary">Visual language for complex systems's project - University of Udine</h2>
+          <h1>Suicedes in the world</h1>
+          <h2 class="heading-secondary">Visual languages for complex systems's project - University of Udine</h2>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

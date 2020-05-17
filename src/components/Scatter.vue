@@ -67,6 +67,12 @@ export default {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').text('Year')
         .attr('fill', 'black')
 
+      // Tooltip
+      var tooltip = d3.select('#scatter')
+        .append('div')
+        .attr('class', 'tooltip')
+        .style('opacity', 0)
+
       // Read the data
       await this.getHappySuicFromDb()
         .then(response => {
@@ -111,6 +117,21 @@ export default {
             .text('Suicides rate')
             .attr('fill', 'black')
 
+          const mouseLeave = function (d) {
+            tooltip.transition()
+              .duration(500)
+              .style('opacity', 0)
+          }
+
+          const mouseMove = function (d) {
+            tooltip.transition()
+              .duration(200)
+              .style('opacity', 1)
+            tooltip.html('<div>' + d.country + '</div><span>' + 'Rank: ' + d.rank + '</span><br><span>' + 'Rate: ' + d.rate + '</span>')
+              .style('left', (d3.event.pageX) + 'px')
+              .style('top', (d3.event.pageY - 30) + 'px')
+          }
+
           // Add dots
           that.svg.append('g')
             .selectAll('dot')
@@ -121,6 +142,8 @@ export default {
             .attr('cy', function (d) { return that.y(d.rate) })
             .attr('r', 5)
             .style('fill', '#69b3a2')
+            .on('mouseleave', mouseLeave)
+            .on('mousemove', mouseMove)
         })
     },
     updatePlot () {
