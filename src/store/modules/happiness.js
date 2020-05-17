@@ -2,14 +2,14 @@ import * as d3 from 'd3'
 import store from '@/store'
 
 const state = {
-  happyness: null,
+  happiness: null,
   happySuic: null
 }
 
 const getters = {
   getHappy (state) {
-    // console.log('getHappy', state.happyness)
-    return state.happyness
+    // console.log('getHappy', state.happiness)
+    return state.happiness
   },
   getHappySuic (state) {
     // console.log('getHappySuic', state.happySuic)
@@ -23,7 +23,7 @@ const actions = {
       store.dispatch('db/open')
         .then(async db => {
           await db.transaction(function (tx) {
-            tx.executeSql(`CREATE TABLE IF NOT EXISTS happyness (
+            tx.executeSql(`CREATE TABLE IF NOT EXISTS happiness (
                             id INTEGER PRIMARY KEY,
                             country TEXT,
                             rank INTEGER
@@ -34,12 +34,12 @@ const actions = {
           }, function () {
             // console.log('create table OK')
           })
-          await d3.csv('/statics/happyness/happyness.csv')
+          await d3.csv('/statics/happiness/happiness.csv')
             .then(async response => {
               await db.transaction(function (tx) {
-                tx.executeSql('DELETE FROM happyness', [])
+                tx.executeSql('DELETE FROM happiness', [])
                 response.forEach(function (row) {
-                  tx.executeSql(`INSERT INTO happyness(
+                  tx.executeSql(`INSERT INTO happiness(
                                   country,
                                   rank
                                   ) VALUES (?,?)`,
@@ -77,7 +77,7 @@ const actions = {
       store.dispatch('db/open')
         .then(async db => {
           await db.transaction(function (tx) {
-            tx.executeSql(`UPDATE happyness
+            tx.executeSql(`UPDATE happiness
                             SET country = 'United States of America'
                             WHERE country = 'United States'
                           `,
@@ -86,7 +86,7 @@ const actions = {
             }, function (error) {
               reject(error)
             })
-            tx.executeSql(`UPDATE happyness
+            tx.executeSql(`UPDATE happiness
                             SET country = 'Republic of Serbia'
                             WHERE country = 'Serbia'
                           `,
@@ -95,7 +95,7 @@ const actions = {
             }, function (error) {
               reject(error)
             })
-            tx.executeSql(`UPDATE happyness
+            tx.executeSql(`UPDATE happiness
                             SET country = 'Mauritania'
                             WHERE country = 'Mauritius'
                           `,
@@ -118,7 +118,7 @@ const actions = {
         .then((db) => {
           db.transaction(function (tx) {
             tx.executeSql(`SELECT *
-                            FROM happyness`,
+                            FROM happiness`,
             [],
             function (tx, resultSet) {
               const happy = []
@@ -149,7 +149,7 @@ const actions = {
             tx.executeSql(
               `SELECT country, s.suicidesRate, h.rank
               FROM suicidi s
-              INNER JOIN happyness h USING(country)
+              INNER JOIN happiness h USING(country)
               WHERE s.year = 2015
               GROUP BY country`,
               [],
@@ -179,7 +179,7 @@ const actions = {
 const mutations = {
   setHappy (state, value) {
     // console.log('setHappy', value)
-    state.happyness = value
+    state.happiness = value
   },
   setHappySuic (state, value) {
     // console.log('setHappySuic', value)

@@ -30,7 +30,7 @@ export default {
           this.lineUpdate()
         })
     },
-    dbUpdate: async function () {
+    dbUpdate: function () {
       this.createLine()
     }
   },

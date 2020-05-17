@@ -8,8 +8,11 @@
         <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
         <p class="range-field__label">2016</p>
       </div>
-      <div class="country-field" v-else>
+      <div class="country-field" v-if="position >= 1500 && position < 2800">
         <q-select v-model="fieldCountry" :options="country" label="Country"/>
+      </div>
+      <div class="country-field" v-if="position >= 2800">
+        <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
       </div>
     </aside>
     <section class="flex pie-area justify-center content-center">
@@ -25,17 +28,15 @@
         </div>
       </div>
     </section>
-    <section class="flex line-area justify-center content-center">
+    <section class="line-area">
       <div class="row">
         <div class="col-1 offset-md-6">
           <LineChart :fieldCountry="fieldCountry"/>
         </div>
       </div>
-    </section>
-    <section class="flex justify-center content-center">
-      <div class="row">
+      <div class="row scatter">
         <div class="col-1 offset-md-6">
-          <Scatter/>
+          <Scatter :fieldNumber="fieldNumber"/>
         </div>
       </div>
     </section>
@@ -63,7 +64,8 @@ export default {
         'Albania'
       ],
       position: 0,
-      fieldCountry: 'Albania'
+      fieldCountry: 'Albania',
+      fieldNumber: 16
     }
   },
   components: {
@@ -72,8 +74,6 @@ export default {
     PieAge,
     LineChart,
     Scatter
-  },
-  mounted () {
   },
   watch: {
     fieldYear: async function () {

@@ -8,8 +8,17 @@ import * as d3 from 'd3'
 
 export default {
   name: 'Scatter',
+  props: {
+    fieldNumber: Number
+  },
   data () {
     return {
+      width: null,
+      svg: null,
+      data: null,
+      x: null,
+      y: null,
+      xAxis: null
     }
   },
   async mounted () {
@@ -22,35 +31,41 @@ export default {
         .then(async () => {
           await that.scatter()
         })
+    },
+    fieldNumber: function () {
+      if (this.fieldNumber > 0 && this.fieldNumber <= 20) {
+        this.updatePlot()
+      }
     }
   },
   computed: {
     ...mapGetters({
-      happy: 'happyness/getHappy',
+      happy: 'happiness/getHappy',
       country: 'suicidi/getCountry',
-      getHappySuic: 'happyness/getHappySuic'
+      getHappySuic: 'happiness/getHappySuic'
     })
   },
   methods: {
     ...mapActions({
-      init: 'happyness/init',
-      getCountryHappyFromDb: 'happyness/getCountryHappyFromDb',
-      getHappySuicFromDb: 'happyness/getHappySuicFromDb'
+      init: 'happiness/init',
+      getCountryHappyFromDb: 'happiness/getCountryHappyFromDb',
+      getHappySuicFromDb: 'happiness/getHappySuicFromDb'
     }),
     async scatter () {
       var that = this
       // set the dimensions and margins of the graph
       var margin = { top: 10, right: 30, bottom: 30, left: 60 }
-      var width = 860 - margin.left - margin.right
+      that.width = 860 - margin.left - margin.right
       var height = 800 - margin.top - margin.bottom
 
       // append the svg object to the body of the page
-      var svg = d3.select('#scatter')
+      that.svg = d3.select('#scatter')
         .append('svg')
-        .attr('width', width + margin.left + margin.right)
+        .attr('width', that.width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').text('Year')
+        .attr('fill', 'black')
 
       // Read the data
       await this.getHappySuicFromDb()
@@ -66,54 +81,66 @@ export default {
           //   }
           // }
           // })
-          var data = that.getHappySuic
+          that.data = that.getHappySuic
           // Add X axis
-          var x = d3.scaleLinear()
-            .domain([160, 1])
-            .range([0, width])
-          var xAxis = svg.append('g')
+          that.x = d3.scaleLinear()
+            .domain([0, 160])
+            .range([0, that.width])
+          that.xAxis = that.svg.append('g')
             .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x))
+            .call(d3.axisBottom(that.x))
+            .append('text')
+            .attr('dx', that.width)
+            .attr('dy', '-.75em')
+            .attr('x', 6)
+            .style('text-anchor', 'end')
+            .text('Rank happiness')
+            .attr('fill', 'black')
 
           // Add Y axis
-          var y = d3.scaleLinear()
+          that.y = d3.scaleLinear()
             .domain([0, 160])
             .range([height, 0])
-          svg.append('g')
-            .call(d3.axisLeft(y))
+          that.svg.append('g')
+            .call(d3.axisLeft(that.y))
+            .append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('dy', '.75em')
+            .attr('y', 6)
+            .style('text-anchor', 'end')
+            .text('Suicides rate')
+            .attr('fill', 'black')
 
           // Add dots
-          svg.append('g')
+          that.svg.append('g')
             .selectAll('dot')
-            .data(data)
+            .data(that.data)
             .enter()
             .append('circle')
-            .attr('cx', function (d) { return x(d.rank) })
-            .attr('cy', function (d) { return y(d.rate) })
+            .attr('cx', function (d) { return that.x(d.rank) })
+            .attr('cy', function (d) { return that.y(d.rate) })
             .attr('r', 5)
             .style('fill', '#69b3a2')
-
-          // A function that update the plot for a given xlim value
-          function updatePlot () {
-            // Get the value of the button
-            // xlim = this.value
-
-            // Update X axis
-            // x.domain([3, xlim])
-            xAxis.transition().duration(1000).call(d3.axisBottom(x))
-
-            // Update chart
-            svg.selectAll('circle')
-              .data(data)
-              .transition()
-              .duration(1000)
-              .attr('cx', function (d) { return x(d.rank) })
-              .attr('cy', function (d) { return y(d.rate) })
-          }
-
-          // Add an event listener to the button created in the html part
-          d3.select('#buttonXlim').on('input', updatePlot)
         })
+    },
+    updatePlot () {
+      var that = this
+
+      // Update X axis
+      that.x
+        .domain([0, that.fieldNumber * 10])
+      that.xAxis
+        .transition()
+        .duration(1000)
+        .call(d3.axisBottom(that.x))
+
+      // Update chart
+      that.svg.selectAll('circle')
+        .data(that.data)
+        .transition()
+        .duration(1000)
+        .attr('cx', function (d) { return that.x(d.rank) })
+        .attr('cy', function (d) { return that.y(d.rate) })
     }
   }
 }
