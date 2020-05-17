@@ -9,12 +9,17 @@ import { mapMutations, mapActions } from 'vuex'
 
 export default {
   name: 'App',
+  data () {
+    return {
+      visible: false
+    }
+  },
   async beforeMount () {
     var that = this
 
-    this.$q.loading.show({ message: 'Get data from db...' })
-    await this.start()
-    await this.init()
+    that.$q.loading.show({ message: 'Get data from db...' })
+    await that.start()
+    await that.init()
       .then(async response => {
         await that.getSuicidiFromDb(1986) // Utili per la mappa
         await that.getTotSuicFromDb(1986) // Utili per il numero totale di suicidi nel mondo
@@ -25,7 +30,8 @@ export default {
         that.dbUpdate(true)
       })
       .finally(() => {
-        this.$q.loading.hide()
+        that.$q.loading.hide()
+        that.visible = true
       })
   },
   methods: {

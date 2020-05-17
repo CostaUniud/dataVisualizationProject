@@ -47,9 +47,9 @@ export default {
     createLine () {
       var that = this
       // set the dimensions and margins of the graph
-      var margin = { top: 10, right: 30, bottom: 30, left: 60 }
-      that.width = 860 - margin.left - margin.right
-      that.height = 800 - margin.top - margin.bottom
+      var margin = { top: 10, right: 30, bottom: 50, left: 60 }
+      that.width = 800 - margin.left - margin.right
+      that.height = 740 - margin.top - margin.bottom
 
       // append the svg object to the body of the page
       that.svg = d3.select('#line-chart')
@@ -74,12 +74,13 @@ export default {
         .attr('class', 'myXaxis')
         .call(that.xAxis.tickFormat(d3.format('.0f')))
         .append('text')
-        .attr('dx', that.width)
-        .attr('dy', '-.75em')
+        .attr('dx', that.width / 2)
+        .attr('dy', '4.5rem')
         .attr('x', 6)
         .style('text-anchor', 'end')
         .text('Year')
         .attr('fill', 'black')
+        .attr('font-size', '2rem')
 
       // Add Y axis
       that.y = d3.scaleLinear()

@@ -1,6 +1,11 @@
 section
   height: 100vh
+  width: 100vw
 .pie-area
+  // position: relative
+  text-align: center
+  h2
+    position: absolute
   p
     text-align: center
     font-weight: bold
@@ -10,6 +15,7 @@ section
     text
       alignment-baseline: central !important
   .tooltip-pie
+    z-index: 1000
     display: inline-block
     position: absolute
     text-align: center
@@ -20,10 +26,24 @@ section
     span:first-child
       font-weight: bold
 .line-area
+  text-align: center
+  position: relative
+  .row
+    margin-top: 10rem
+    margin-bottom: 40rem
+    #line-chart
+      @include absCenter
+.scatter-area
+  text-align: center
+  // position: relative
+  .row
+    margin-top: 10rem
+    // margin-bottom: 40rem
+    #scatter
   .scatter
-    margin-top: 30rem
     height: 100vh
     .tooltip
+      z-index: 1000
       display: inline-block
       position: absolute
       padding: .7rem
@@ -34,6 +54,7 @@ section
         text-align: center
         font-weight: bold
 aside
+  z-index: 2000
   .range-field
     text-align: center
     position: fixed

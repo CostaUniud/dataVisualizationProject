@@ -54,9 +54,9 @@ export default {
     async scatter () {
       var that = this
       // set the dimensions and margins of the graph
-      var margin = { top: 10, right: 30, bottom: 30, left: 60 }
-      that.width = 860 - margin.left - margin.right
-      var height = 800 - margin.top - margin.bottom
+      var margin = { top: 10, right: 30, bottom: 50, left: 60 }
+      that.width = 800 - margin.left - margin.right
+      var height = 740 - margin.top - margin.bottom
 
       // append the svg object to the body of the page
       that.svg = d3.select('#scatter')
@@ -96,12 +96,13 @@ export default {
             .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(that.x))
             .append('text')
-            .attr('dx', that.width)
-            .attr('dy', '-.75em')
+            .attr('dx', that.width / 1.75)
+            .attr('dy', '4.5rem')
             .attr('x', 6)
             .style('text-anchor', 'end')
             .text('Rank happiness')
             .attr('fill', 'black')
+            .attr('font-size', '2rem')
 
           // Add Y axis
           that.y = d3.scaleLinear()
@@ -127,7 +128,7 @@ export default {
             tooltip.transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip.html('<div>' + d.country + '</div><span>' + 'Rank: ' + d.rank + '</span><br><span>' + 'Rate: ' + d.rate + '</span>')
+            tooltip.html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
           }
