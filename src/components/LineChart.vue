@@ -95,11 +95,13 @@ export default {
         .call(that.yAxis)
         .append('text')
         .attr('transform', 'rotate(-90)')
-        .attr('dy', '.75em')
+        .attr('dx', -(that.height / 2))
+        .attr('dy', '-5rem')
         .attr('y', 6)
         .style('text-anchor', 'end')
         .text('Suicides')
         .attr('fill', 'black')
+        .attr('font-size', '2rem')
 
       // Add the line
       that.line = that.svg

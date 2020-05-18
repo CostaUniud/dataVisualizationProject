@@ -96,7 +96,7 @@ export default {
             .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(that.x))
             .append('text')
-            .attr('dx', that.width / 1.75)
+            .attr('dx', that.width / 1.7)
             .attr('dy', '4.5rem')
             .attr('x', 6)
             .style('text-anchor', 'end')
@@ -112,11 +112,13 @@ export default {
             .call(d3.axisLeft(that.y))
             .append('text')
             .attr('transform', 'rotate(-90)')
-            .attr('dy', '.75em')
+            .attr('dx', -(height / 2.3))
+            .attr('dy', '-4rem')
             .attr('y', 6)
             .style('text-anchor', 'end')
             .text('Suicides rate')
             .attr('fill', 'black')
+            .attr('font-size', '2rem')
 
           const mouseLeave = function (d) {
             tooltip.transition()

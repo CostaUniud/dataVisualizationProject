@@ -11,7 +11,7 @@
       <div class="country-field" v-if="position >= 1500 && position < 2800">
         <q-select v-model="fieldCountry" :options="country" label="Country"/>
       </div>
-      <div class="country-field" v-if="position >= 2800">
+      <div class="country-field" v-if="position >= 2800 && position < 3700">
         <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
       </div>
     </aside>
@@ -45,6 +45,11 @@
         </div>
       </div>
     </section>
+    <q-separator inset color="gray" style="height: 1px; margin: 0 20rem"/>
+    <section class="methodology">
+      <h3 class="heading-tertiary">Methodology</h3>
+      <Methodology />
+    </section>
   </q-page>
 </template>
 
@@ -56,6 +61,7 @@ import PieSex from '@/components/Sex.vue'
 import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
 import Scatter from '@/components/Scatter.vue'
+import Methodology from '@/components/Methodology.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget, getScrollPosition } = scroll
 
@@ -78,7 +84,8 @@ export default {
     PieSex,
     PieAge,
     LineChart,
-    Scatter
+    Scatter,
+    Methodology
   },
   watch: {
     fieldYear: async function () {

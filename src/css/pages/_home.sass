@@ -29,17 +29,15 @@ section
   text-align: center
   position: relative
   .row
-    margin-top: 10rem
-    margin-bottom: 40rem
     #line-chart
       @include absCenter
 .scatter-area
   text-align: center
-  // position: relative
+  margin-bottom: 10rem
   .row
-    margin-top: 10rem
-    // margin-bottom: 40rem
+    padding-top: 7rem
     #scatter
+      // margin: 0 auto
   .scatter
     height: 100vh
     .tooltip
@@ -53,6 +51,13 @@ section
       div
         text-align: center
         font-weight: bold
+.methodology
+  padding: 10rem 30rem
+  .methodology--paragraph
+    padding-top: 5rem
+    ul
+      list-style-position: inside
+      padding-inline-start: 1rem
 aside
   z-index: 2000
   .range-field
