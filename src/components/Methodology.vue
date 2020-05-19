@@ -19,25 +19,21 @@
     </p>
     <h4>The map</h4>
     <p>
-      Ciao
+      Qui si sono utilizzati i tassi di suicidi ogni 100.000 abitanti per ogni singolo Paese ogni anno.
     </p>
     <h4>Total world suicides per year</h4>
     <p>
-      Ciao
+      &Eacute; stata fatta la somma dei suicidi in tutti i Paesi per ogni anno. In oltre &egrave; stata aggiuta la percetuale in base al sesso e l&rsquo;et&agrave;.
     </p>
     <h4>Trend suicides per country</h4>
     <p>
-      Ciao
+      Qui sono stati utilizzati i numeri di suicidi per Paese, mostrando il trend del numero di quest&rsquo;ultimi ogni anno per ogni singolo Paese.
     </p>
-    <h4>Ralation suicides/happiness in countries</h4>
+    <h4>Relation suicides/happiness in countries</h4>
     <p>
-      Ciao
+      Sono stati presi i dati sui suicidi e sugli indici di felicit&agrave; dei vari Paesi nel 2015 per mostrare la relazione tra tasso di suicidio e felicità nei vari Paesi.
+      Quest'ultimo viene espresso in una classifica dei Paesi, dove al primo posto c'è il Paese più felice al mondo. Quindi sulle ascisse del grafico la felicità diminuirà
+      andando verso destra.
     </p>
   </div>
 </template>
-
-<script>
-export default {
-
-}
-</script>
