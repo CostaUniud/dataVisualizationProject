@@ -47,7 +47,6 @@
     </section>
     <q-separator inset color="gray" style="height: 1px; margin: 0 20rem"/>
     <section class="methodology">
-      <h3 class="heading-tertiary">Methodology</h3>
       <Methodology />
     </section>
   </q-page>
