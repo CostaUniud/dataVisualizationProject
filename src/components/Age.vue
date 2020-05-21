@@ -155,7 +155,7 @@ export default {
         that.tooltip.transition()
           .duration(200)
           .style('opacity', 1)
-        that.tooltip.html('<span>' + Math.round((d.data.value / (that.age['5-14 years'] + that.age['15-24 years'] + that.age['25-34 years'] + that.age['35-54 years'] + that.age['55-74 years'] + that.age['75+ years'])) * 100) + '%</span>')
+        that.tooltip.html('<span>' + Math.round((d.data.value / ((that.age['5-14 years'] || 0) + that.age['15-24 years'] + that.age['25-34 years'] + that.age['35-54 years'] + that.age['55-74 years'] + that.age['75+ years'])) * 100) + '%</span>')
           .style('left', (d3.event.pageX) + 'px')
           .style('top', (d3.event.pageY - 30) + 'px')
       }

@@ -110,11 +110,11 @@ export default {
         .datum(data)
         .attr('fill', 'none')
         .attr('stroke', 'steelblue')
-        .attr('stroke-width', 1.5)
+        .attr('stroke-width', 3)
         .attr('d', d3.line()
           .x(function (d) { return that.x(d.y) })
           .y(function (d) { return that.y(d.n) })
-          // .curve(d3.curveMonotoneX) // apply smoothing to the line
+          .curve(d3.curveMonotoneX) // apply smoothing to the line
         )
 
       // Dot
@@ -153,11 +153,23 @@ export default {
         .duration(600)
         .attr('fill', 'none')
         .attr('stroke', 'steelblue')
-        .attr('stroke-width', 1.5)
+        .attr('stroke-width', 3)
         .attr('d', d3.line()
           .x(function (d) { return that.x(d.y) })
           .y(function (d) { return that.y(d.n) })
+          .curve(d3.curveMonotoneX) // apply smoothing to the line
         )
+
+      // Dot - SISTEMARE PUNTI
+      // that.svg.selectAll('.dot')
+      //   .data(data)
+      //   .enter()
+      //   .append('circle')
+      //   .attr('class', 'dot')
+      //   .attr('cx', function (d) { return that.x(d.y) })
+      //   .attr('cy', function (d) { return that.y(d.n) })
+      //   .attr('r', 5)
+      //   .attr('fill', 'steelblue')
     }
   }
 }

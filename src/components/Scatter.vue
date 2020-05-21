@@ -14,6 +14,7 @@ export default {
   data () {
     return {
       width: null,
+      height: null,
       svg: null,
       data: null,
       x: null,
@@ -56,13 +57,13 @@ export default {
       // set the dimensions and margins of the graph
       var margin = { top: 10, right: 30, bottom: 50, left: 60 }
       that.width = 800 - margin.left - margin.right
-      var height = 740 - margin.top - margin.bottom
+      that.height = 740 - margin.top - margin.bottom
 
       // append the svg object to the body of the page
       that.svg = d3.select('#scatter')
         .append('svg')
         .attr('width', that.width + margin.left + margin.right)
-        .attr('height', height + margin.top + margin.bottom)
+        .attr('height', that.height + margin.top + margin.bottom)
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').text('Year')
         .attr('fill', 'black')
@@ -93,9 +94,10 @@ export default {
             .domain([0, 160])
             .range([0, that.width])
           that.xAxis = that.svg.append('g')
-            .attr('transform', 'translate(0,' + height + ')')
+            .attr('transform', 'translate(0,' + that.height + ')')
             .call(d3.axisBottom(that.x))
             .append('text')
+            .attr('class', 'label')
             .attr('dx', that.width / 1.7)
             .attr('dy', '4.5rem')
             .attr('x', 6)
@@ -107,12 +109,13 @@ export default {
           // Add Y axis
           that.y = d3.scaleLinear()
             .domain([0, 160])
-            .range([height, 0])
+            .range([that.height, 0])
           that.svg.append('g')
             .call(d3.axisLeft(that.y))
             .append('text')
+            .attr('class', 'label')
             .attr('transform', 'rotate(-90)')
-            .attr('dx', -(height / 2.3))
+            .attr('dx', -(that.height / 2.3))
             .attr('dy', '-4rem')
             .attr('y', 6)
             .style('text-anchor', 'end')
@@ -159,6 +162,10 @@ export default {
         .transition()
         .duration(1000)
         .call(d3.axisBottom(that.x))
+
+      that.svg.selectAll('.label')
+        .attr('fill', 'black')
+        .attr('font-size', '2rem')
 
       // Update chart
       that.svg.selectAll('circle')
