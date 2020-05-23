@@ -29,11 +29,13 @@
     <p>
       Qui sono stati utilizzati i numeri di suicidi per Paese, mostrando il trend del numero di quest&rsquo;ultimi ogni anno per ogni singolo Paese.
     </p>
-    <h4>Relation suicides/happiness in countries</h4>
+    <h4>Relation suicides/happiness in 2015</h4>
     <p>
       Sono stati presi i dati sui suicidi e sugli indici di felicit&agrave; dei vari Paesi nel 2015 per mostrare la relazione tra tasso di suicidio e felicità nei vari Paesi.
       Quest'ultimo viene espresso in una classifica dei Paesi, dove al primo posto c'è il Paese più felice al mondo. Quindi sulle ascisse del grafico la felicità diminuirà
       andando verso destra.
     </p>
+    <h4>Relation suicides/gdp per year</h4>
+    <p></p>
   </div>
 </template>

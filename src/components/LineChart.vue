@@ -136,14 +136,14 @@ export default {
       that.x.domain(d3.extent(data, function (d) { return d.y }))
       that.svg.selectAll('.myXaxis')
         .transition()
-        .duration(600)
+        .duration(1000)
         .call(that.xAxis)
 
       // Add Y axis
       that.y.domain([0, d3.max(data, function (d) { return d.n })])
       that.svg.selectAll('.myYaxis')
         .transition()
-        .duration(600)
+        .duration(1000)
         .call(that.yAxis)
 
       // Add the line

@@ -21,10 +21,10 @@ export default {
     await that.start()
     await that.init()
       .then(async response => {
-        await that.getSuicidiFromDb(1986) // Utili per la mappa
-        await that.getTotSuicFromDb(1986) // Utili per il numero totale di suicidi nel mondo
-        await that.getSexFromDb(1986) // Grafico a torta sesso
-        await that.getAgeFromDb(1986) // Grafico a torta età
+        await that.getSuicidiFromDb(1985) // Utili per la mappa
+        await that.getTotSuicFromDb(1985) // Utili per il numero totale di suicidi nel mondo
+        await that.getSexFromDb(1985) // Grafico a torta sesso
+        await that.getAgeFromDb(1985) // Grafico a torta età
         await that.getCountryFromDb() // Per il q-select del LineChart
         await that.getSuicidiCountryFromDb('Albania') // LineChart
         that.dbUpdate(true)

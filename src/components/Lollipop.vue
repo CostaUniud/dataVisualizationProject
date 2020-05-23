@@ -55,7 +55,7 @@ export default {
     async lollipop () {
       var that = this
       // set the dimensions and margins of the graph
-      var margin = { top: 10, right: 30, bottom: 100, left: 60 }
+      var margin = { top: 10, right: 30, bottom: 150, left: 60 }
       that.width = 1300 - margin.left - margin.right
       that.height = 800 - margin.top - margin.bottom
 
@@ -98,21 +98,24 @@ export default {
             .attr('transform', 'translate(-10,0)rotate(-45)')
             .style('text-anchor', 'end')
             .attr('font-size', '1.5rem')
+
+          that.svg
             .append('text')
             .attr('class', 'label')
-            .attr('dx', that.width / 1.7)
-            .attr('dy', '6.5rem')
+            .attr('dx', that.width / 2)
+            .attr('dy', '75rem')
             .attr('x', 6)
             .style('text-anchor', 'end')
-            .text('Rank happiness')
+            .text('Happiness')
             .attr('fill', 'black')
             .attr('font-size', '2rem')
 
           // Add Y axis
           that.y = d3.scaleLinear()
-            .domain([0, 50])
+            .domain([0, 40])
             .range([that.height, 0])
-          that.svg.append('g')
+          that.svg
+            .append('g')
             .call(d3.axisLeft(that.y))
             .append('text')
             .attr('class', 'label')

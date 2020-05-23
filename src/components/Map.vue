@@ -58,14 +58,14 @@ export default {
     }
   },
   watch: {
+    dbUpdate: async function () {
+      await this.mappa()
+    },
     fieldYear: async function () {
       await this.getSuicidiFromDb(this.fieldYear)
         .then(response => {
           this.updateMap()
         })
-    },
-    dbUpdate: async function () {
-      await this.mappa()
     }
   },
   computed: {
@@ -154,7 +154,7 @@ export default {
               .style('opacity', 1)
             tooltip.html('<span>' + d.properties.name + '</span><br><span>' + (d.total === 0 ? 'No data' : d.total) + '</span>')
               .style('left', (d3.event.pageX) + 'px')
-              .style('top', (d3.event.pageY - 30) + 'px')
+              .style('top', (d3.event.pageY - 70) + 'px')
           }
 
           // Draw the map
@@ -171,7 +171,7 @@ export default {
             .attr('fill', function (d) {
               d.total = data.get(d.properties.name) || 0
               if (d.total === 0) {
-                return '#D6D6D6'
+                return '#B8B8B9'
               }
               return that.colorScale(d.total)
             })
@@ -193,7 +193,7 @@ export default {
             .attr('height', size)
             .style('fill', function (d) {
               if (d === 'No data') {
-                return '#D6D6D6'
+                return '#B8B8B9'
               }
               return color(d)
             })
@@ -226,7 +226,7 @@ export default {
         .attr('fill', function (d) {
           d.total = data.get(d.properties.name) || 0
           if (d.total === 0) {
-            return '#D6D6D6'
+            return '#B8B8B9'
           }
           return that.colorScale(d.total)
         })

@@ -7,7 +7,8 @@ const state = {
   age: null,
   tot: null,
   suicidiCountry: null,
-  country: null
+  country: null,
+  pil: null
 }
 
 const getters = {
@@ -34,6 +35,10 @@ const getters = {
   getCountry (state) {
     // console.log('getCountry', state.country)
     return state.country
+  },
+  getPil (state) {
+    // console.log('getPil', state.pil)
+    return state.pil
   }
 }
 
@@ -61,6 +66,10 @@ const mutations = {
   setCountry (state, value) {
     // console.log('setCountry', value)
     state.country = value
+  },
+  setPil (state, value) {
+    // console.log('setPil', value)
+    state.pil = value
   }
 }
 
@@ -372,6 +381,39 @@ const actions = {
             reject(error)
           }, function () {
             // console.log('getCountryFromDb fatto')
+            resolve(true)
+          })
+        })
+    })
+  },
+  getPilFromDb (context, year) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT country, SUM(suicidi.suicides) AS somma_suicidi, SUM(suicidi.population) AS somma_popolazione, gdpYear
+              FROM suicidi
+              WHERE year = ?
+              GROUP BY country`,
+              [year],
+              function (tx, resultSet) {
+                const a = []
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  a.push({
+                    country: resultSet.rows.item(r).country,
+                    rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
+                    gdpYear: resultSet.rows.item(r).gdpYear
+                  })
+                }
+                context.commit('setPil', a)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            // console.log('getPilFromDb fatto')
             resolve(true)
           })
         })

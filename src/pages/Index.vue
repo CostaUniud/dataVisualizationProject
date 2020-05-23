@@ -3,9 +3,9 @@
     <Map :fieldYear="fieldYear"/>
     <aside ref="aside">
       <q-scroll-observer @scroll="scrollHandler"/>
-      <div class="range-field" v-if="position < 1500">
-        <p class="range-field__label">1986</p>
-        <q-slider v-model="fieldYear" color="negative" :min="1986" :max="2016" vertical label />
+      <div class="range-field" v-if="position < 1500 || (position > 3800 && position < 4500)">
+        <p class="range-field__label">1985</p>
+        <q-slider v-model="fieldYear" color="negative" :min="1985" :max="2016" vertical label />
         <p class="range-field__label">2016</p>
       </div>
       <div class="country-field" v-if="position >= 1500 && position < 2800">
@@ -38,10 +38,18 @@
       </div>
     </section>
     <section class="lollipop-area">
-      <h2 class="heading-secondary">Relation suicides/happiness in countries</h2>
+      <h2 class="heading-secondary">Relation suicides/happiness in 2015</h2>
       <div class="row lollipop">
         <div class="col-1 offset-md-2">
           <Lollipop /> <!-- :fieldNumber="fieldNumber" -->
+        </div>
+      </div>
+    </section>
+    <section class="lollipop-area">
+      <h2 class="heading-secondary">Relation suicides/gdp per year</h2>
+      <div class="row lollipop">
+        <div class="col-1 offset-md-2">
+          <PIL :fieldYear="fieldYear"/>
         </div>
       </div>
     </section>
@@ -60,6 +68,7 @@ import PieSex from '@/components/Sex.vue'
 import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
 import Lollipop from '@/components/Lollipop.vue'
+import PIL from '@/components/PIL.vue'
 import Methodology from '@/components/Methodology.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget, getScrollPosition } = scroll
@@ -68,7 +77,7 @@ export default {
   name: 'Index',
   data () {
     return {
-      fieldYear: 1986,
+      fieldYear: 1985,
       model: null,
       options: [
         'Albania'
@@ -84,7 +93,8 @@ export default {
     PieAge,
     LineChart,
     Lollipop,
-    Methodology
+    Methodology,
+    PIL
   },
   watch: {
     fieldYear: async function () {
@@ -99,8 +109,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getTotSuicFromDb: 'suicidi/getTotSuicFromDb',
-      getCountryFromDb: 'suicidi/getCountryFromDb'
+      getTotSuicFromDb: 'suicidi/getTotSuicFromDb'
+      // getCountryFromDb: 'suicidi/getCountryFromDb'
     }),
     formatMoney,
     scrollHandler () {
