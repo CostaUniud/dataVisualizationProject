@@ -170,6 +170,9 @@ export default {
             // set the color of each country
             .attr('fill', function (d) {
               d.total = data.get(d.properties.name) || 0
+              if (d.total === 0) {
+                return '#D6D6D6'
+              }
               return that.colorScale(d.total)
             })
             .style('stroke', 'transparent')
@@ -188,7 +191,12 @@ export default {
             .attr('y', function (d, i) { return 600 + i * (size + 5) })
             .attr('width', size)
             .attr('height', size)
-            .style('fill', function (d) { return color(d) })
+            .style('fill', function (d) {
+              if (d === 'No data') {
+                return '#D6D6D6'
+              }
+              return color(d)
+            })
           that.svg.selectAll('mylabels')
             .data(keys)
             .enter()
@@ -217,6 +225,9 @@ export default {
       that.svg.selectAll('path')
         .attr('fill', function (d) {
           d.total = data.get(d.properties.name) || 0
+          if (d.total === 0) {
+            return '#D6D6D6'
+          }
           return that.colorScale(d.total)
         })
 

@@ -11,9 +11,9 @@
       <div class="country-field" v-if="position >= 1500 && position < 2800">
         <q-select v-model="fieldCountry" :options="country" label="Country"/>
       </div>
-      <div class="country-field" v-if="position >= 2800 && position < 3700">
+      <!-- <div class="country-field" v-if="position >= 2800 && position < 3700">
         <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
-      </div>
+      </div> -->
     </aside>
     <section class="flex pie-area justify-center content-center">
       <h2 class="heading-secondary">Total world suicides per year</h2>
@@ -37,11 +37,11 @@
         </div>
       </div>
     </section>
-    <section class="scatter-area">
+    <section class="lollipop-area">
       <h2 class="heading-secondary">Relation suicides/happiness in countries</h2>
-      <div class="row scatter">
-        <div class="col-1 offset-md-3">
-          <Scatter :fieldNumber="fieldNumber"/>
+      <div class="row lollipop">
+        <div class="col-1 offset-md-2">
+          <Lollipop /> <!-- :fieldNumber="fieldNumber" -->
         </div>
       </div>
     </section>
@@ -59,7 +59,7 @@ import Map from '@/components/Map.vue'
 import PieSex from '@/components/Sex.vue'
 import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
-import Scatter from '@/components/Scatter.vue'
+import Lollipop from '@/components/Lollipop.vue'
 import Methodology from '@/components/Methodology.vue'
 import { scroll } from 'quasar'
 const { getScrollTarget, getScrollPosition } = scroll
@@ -74,8 +74,8 @@ export default {
         'Albania'
       ],
       position: 0,
-      fieldCountry: 'Albania',
-      fieldNumber: 16
+      fieldCountry: 'Albania'
+      // fieldNumber: 16
     }
   },
   components: {
@@ -83,7 +83,7 @@ export default {
     PieSex,
     PieAge,
     LineChart,
-    Scatter,
+    Lollipop,
     Methodology
   },
   watch: {

@@ -147,18 +147,19 @@ const actions = {
         .then((db) => {
           db.transaction(function (tx) {
             tx.executeSql(
-              `SELECT country, s.suicidesRate, h.rank
+              `SELECT country, SUM(s.suicides) AS somma_suicidi, SUM(s.population) AS somma_popolazione, h.rank
               FROM suicidi s
               INNER JOIN happiness h USING(country)
               WHERE s.year = 2015
-              GROUP BY country`,
+              GROUP BY country
+              ORDER BY h.rank DESC`,
               [],
               function (tx, resultSet) {
                 const a = []
                 for (let r = 0; r < resultSet.rows.length; r++) {
                   a.push({
                     country: resultSet.rows.item(r).country,
-                    rate: resultSet.rows.item(r).suicidesRate,
+                    rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
                     rank: resultSet.rows.item(r).rank
                   })
                 }
