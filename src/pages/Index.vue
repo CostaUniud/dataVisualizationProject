@@ -48,7 +48,7 @@
     <section class="lollipop-area">
       <h2 class="heading-secondary">Relation suicides/gdp per year</h2>
       <div class="row lollipop">
-        <div class="col-1 offset-md-2">
+        <div class="col-1 offset-md-1">
           <PIL :fieldYear="fieldYear"/>
         </div>
       </div>
