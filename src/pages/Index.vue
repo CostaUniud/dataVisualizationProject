@@ -15,18 +15,21 @@
         <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
       </div> -->
     </aside>
-    <section class="flex pie-area justify-center content-center">
-      <h2 class="heading-secondary">Total world suicides per year</h2>
-      <div class="row">
-        <div class="flex col-1 justify-center content-center" style="width: 10rem;">
+    <section class="flex pie-area">
+      <h2 class="heading-secondary" style="left: 50%; transform: translate(-50%, 0);">Total world suicides per year</h2>
+      <div class="row" style="margin-top: 7rem">
+        <div class="col-1 offset-md-3" style="width: 10rem;">
           <p>{{ formatMoney(tot) }}</p>
         </div>
-        <div class="col-1 offset-md-1">
+        <div class="col-1 offset-md-6">
+          <SexAge :fieldYear="fieldYear"/>
+        </div>
+        <!-- <div class="col-1 offset-md-1">
           <PieSex :fieldYear="fieldYear"/>
         </div>
         <div class="col-1 offset-md-4">
           <PieAge :fieldYear="fieldYear"/>
-        </div>
+        </div> -->
       </div>
     </section>
     <section class="line-area">
@@ -48,7 +51,7 @@
     <section class="lollipop-area">
       <h2 class="heading-secondary">Relation suicides/gdp per year</h2>
       <div class="row lollipop">
-        <div class="col-1 offset-md-1">
+        <div class="col-1">
           <PIL :fieldYear="fieldYear"/>
         </div>
       </div>
@@ -64,8 +67,9 @@
 import { mapGetters, mapActions } from 'vuex'
 import { formatMoney } from '@/utils/bt.js'
 import Map from '@/components/Map.vue'
-import PieSex from '@/components/Sex.vue'
-import PieAge from '@/components/Age.vue'
+import SexAge from '@/components/SexAge.vue'
+// import PieSex from '@/components/Sex.vue'
+// import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
 import Lollipop from '@/components/Lollipop.vue'
 import PIL from '@/components/PIL.vue'
@@ -89,8 +93,9 @@ export default {
   },
   components: {
     Map,
-    PieSex,
-    PieAge,
+    SexAge,
+    // PieSex,
+    // PieAge,
     LineChart,
     Lollipop,
     Methodology,

@@ -52,7 +52,7 @@ export default {
     lolli () {
       var that = this
       // set the dimensions and margins of the graph
-      var margin = { top: 10, right: 100, bottom: 150, left: 60 }
+      var margin = { top: 10, right: 40, bottom: 150, left: 250 }
       that.width = 1700 - margin.left - margin.right
       that.height = 800 - margin.top - margin.bottom
 
@@ -81,11 +81,10 @@ export default {
       that.svg
         .append('text')
         .attr('class', 'label')
-        .attr('dx', that.width / 2)
+        .attr('dx', that.width / 2.3)
         .attr('dy', '75rem')
         .attr('x', 6)
-        .style('text-anchor', 'end')
-        .text('Gdp')
+        .text('Gross domestic product')
         .attr('fill', 'black')
         .attr('font-size', '2rem')
 
@@ -100,10 +99,9 @@ export default {
         .append('text')
         .attr('class', 'label')
         .attr('transform', 'rotate(-90)')
-        .attr('dx', -(that.height / 2.3))
+        .attr('dx', -(that.height / 1.7))
         .attr('dy', '-5rem')
         .attr('y', 6)
-        .style('text-anchor', 'end')
         .text('Suicides rate')
         .attr('fill', 'black')
         .attr('font-size', '2rem')

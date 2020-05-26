@@ -8,7 +8,8 @@ const state = {
   tot: null,
   suicidiCountry: null,
   country: null,
-  pil: null
+  pil: null,
+  sexAge: null
 }
 
 const getters = {
@@ -39,6 +40,10 @@ const getters = {
   getPil (state) {
     // console.log('getPil', state.pil)
     return state.pil
+  },
+  getSexAge (state) {
+    // console.log('getSexAge', state.sexAge)
+    return state.sexAge
   }
 }
 
@@ -70,6 +75,10 @@ const mutations = {
   setPil (state, value) {
     // console.log('setPil', value)
     state.pil = value
+  },
+  setSexAge (state, value) {
+    // console.log('setSexAge', value)
+    state.sexAge = value
   }
 }
 
@@ -414,6 +423,39 @@ const actions = {
             reject(error)
           }, function () {
             // console.log('getPilFromDb fatto')
+            resolve(true)
+          })
+        })
+    })
+  },
+  getSexAgeFromDb (context, year) {
+    return new Promise((resolve, reject) => {
+      store.dispatch('db/open')
+        .then((db) => {
+          db.transaction(function (tx) {
+            tx.executeSql(
+              `SELECT age, sex, SUM(suicidi.suicides) AS somma_suicidi
+              FROM suicidi
+              WHERE year = ?
+              GROUP BY age, sex`,
+              [year],
+              function (tx, resultSet) {
+                const a = []
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  a.push({
+                    sex: resultSet.rows.item(r).sex,
+                    age: resultSet.rows.item(r).age,
+                    suic: resultSet.rows.item(r).somma_suicidi
+                  })
+                }
+                context.commit('setSexAge', a)
+              }, function (error) {
+                reject(error)
+              })
+          }, function (error) {
+            reject(error)
+          }, function () {
+            // console.log('getSexAgeFromDb fatto')
             resolve(true)
           })
         })
