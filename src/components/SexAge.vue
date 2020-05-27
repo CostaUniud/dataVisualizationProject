@@ -20,7 +20,6 @@ export default {
       x: null,
       y: null,
       xAxis: null,
-      tooltip: null,
       xSubgroup: null,
       color: null
     }
@@ -48,12 +47,12 @@ export default {
     }),
     bar () {
       var that = this
-      // set the dimensions and margins of the graph
+      // Set the dimensions and margins of the graph
       var margin = { top: 30, right: 30, bottom: 70, left: 60 }
       that.width = 860 - margin.left - margin.right
       that.height = 800 - margin.top - margin.bottom
 
-      // append the svg object to the body of the page
+      // Append the svg object to the body of the page
       that.svg = d3.select('#sex-age')
         .append('svg')
         .attr('width', that.width + margin.left + margin.right)
@@ -76,13 +75,37 @@ export default {
         .append('g')
         .attr('class', 'myYaxis')
 
-      // Another scale for subgroup position?
+      // Another scale for subgroup position
       that.xSubgroup = d3.scaleBand()
         .padding([0.05])
 
-      // color palette = one color per subgroup
+      // Color palette = one color per subgroup
       that.color = d3.scaleOrdinal()
         .range(['#e41a1c', '#377eb8'])
+
+      // Legend
+      var legend = that.svg
+        .selectAll('.legend')
+        .data(['Female', 'Male'])
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function (d, i) { return 'translate(0,' + i * 20 + ')' })
+
+      legend
+        .append('rect')
+        .attr('x', that.width - 18)
+        .attr('width', 18)
+        .attr('height', 18)
+        .style('fill', that.color)
+
+      legend
+        .append('text')
+        .attr('x', that.width - 24)
+        .attr('y', 3.5)
+        .attr('dy', '.35em')
+        .style('text-anchor', 'end')
+        .text(function (d) { return d })
 
       that.updateBar()
     },
@@ -100,6 +123,8 @@ export default {
         .transition()
         .duration(750)
         .call(d3.axisBottom(that.x).tickSize(0))
+        .selectAll('text')
+        .attr('font-size', '1.2rem')
 
       // Add Y axis
       that.y
@@ -109,6 +134,8 @@ export default {
         // .transition()
         // .duration(500)
         .call(d3.axisLeft(that.y))
+        .selectAll('text')
+        .attr('font-size', '1.2rem')
 
       // Another scale for subgroup position?
       that.xSubgroup = d3.scaleBand()

@@ -19,17 +19,13 @@
       <h2 class="heading-secondary" style="left: 50%; transform: translate(-50%, 0);">Total world suicides per year</h2>
       <div class="row" style="margin-top: 7rem">
         <div class="col-1 offset-md-3" style="width: 10rem;">
-          <p>{{ formatMoney(tot) }}</p>
+          <p><span class="sub-title">Total </span><span class="value">{{ formatMoney(tot) }}</span></p>
+          <p class="sex"><span class="sub-title">Male </span><span class="value male">{{ formatMoney(sex.male) }}</span></p>
+          <p class="sex"><span class="sub-title">Female </span><span class="value female">{{ formatMoney(sex.female) }}</span></p>
         </div>
         <div class="col-1 offset-md-6">
           <SexAge :fieldYear="fieldYear"/>
         </div>
-        <!-- <div class="col-1 offset-md-1">
-          <PieSex :fieldYear="fieldYear"/>
-        </div>
-        <div class="col-1 offset-md-4">
-          <PieAge :fieldYear="fieldYear"/>
-        </div> -->
       </div>
     </section>
     <section class="line-area">
@@ -44,7 +40,7 @@
       <h2 class="heading-secondary">Relation suicides/happiness in 2015</h2>
       <div class="row lollipop">
         <div class="col-1 offset-md-2">
-          <Lollipop /> <!-- :fieldNumber="fieldNumber" -->
+          <Lollipop />
         </div>
       </div>
     </section>
@@ -68,8 +64,6 @@ import { mapGetters, mapActions } from 'vuex'
 import { formatMoney } from '@/utils/bt.js'
 import Map from '@/components/Map.vue'
 import SexAge from '@/components/SexAge.vue'
-// import PieSex from '@/components/Sex.vue'
-// import PieAge from '@/components/Age.vue'
 import LineChart from '@/components/LineChart.vue'
 import Lollipop from '@/components/Lollipop.vue'
 import PIL from '@/components/PIL.vue'
@@ -88,14 +82,11 @@ export default {
       ],
       position: 0,
       fieldCountry: 'Albania'
-      // fieldNumber: 16
     }
   },
   components: {
     Map,
     SexAge,
-    // PieSex,
-    // PieAge,
     LineChart,
     Lollipop,
     Methodology,
@@ -104,18 +95,20 @@ export default {
   watch: {
     fieldYear: async function () {
       await this.getTotSuicFromDb(this.fieldYear)
+      await this.getSexFromDb(this.fieldYear)
     }
   },
   computed: {
     ...mapGetters({
       tot: 'suicidi/getTot',
-      country: 'suicidi/getCountry'
+      country: 'suicidi/getCountry',
+      sex: 'suicidi/getSex'
     })
   },
   methods: {
     ...mapActions({
-      getTotSuicFromDb: 'suicidi/getTotSuicFromDb'
-      // getCountryFromDb: 'suicidi/getCountryFromDb'
+      getTotSuicFromDb: 'suicidi/getTotSuicFromDb',
+      getSexFromDb: 'suicidi/getSexFromDb'
     }),
     formatMoney,
     scrollHandler () {

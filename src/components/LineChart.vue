@@ -138,6 +138,8 @@ export default {
         .transition()
         .duration(1000)
         .call(that.xAxis)
+        .selectAll('text')
+        .attr('font-size', '1.5rem')
 
       // Add Y axis
       that.y.domain([0, d3.max(data, function (d) { return d.n })])
@@ -145,6 +147,8 @@ export default {
         .transition()
         .duration(1000)
         .call(that.yAxis)
+        .selectAll('text')
+        .attr('font-size', '1.5rem')
 
       // Add the line
       that.line

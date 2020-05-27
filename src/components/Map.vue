@@ -149,16 +149,19 @@ export default {
           }
 
           const mouseMove = function (d) {
-            tooltip.transition()
+            tooltip
+              .transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip.html('<span>' + d.properties.name + '</span><br><span>' + (d.total === 0 ? 'No data' : d.total) + '</span>')
+            tooltip
+              .html('<span>' + d.properties.name + '</span><br><span>' + (d.total === 0 ? 'No data' : d.total) + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 70) + 'px')
           }
 
           // Draw the map
-          that.svg.append('g')
+          that.svg
+            .append('g')
             .selectAll('path')
             .data(world.features)
             .enter()
@@ -183,7 +186,8 @@ export default {
             .on('mousemove', mouseMove)
           // Draw the legend
           var size = 20
-          that.svg.selectAll('mydots')
+          that.svg
+            .selectAll('mydots')
             .data(keys)
             .enter()
             .append('rect')

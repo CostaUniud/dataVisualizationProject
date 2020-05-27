@@ -129,7 +129,8 @@ export default {
             .attr('font-size', '2rem')
 
           // Lines
-          that.svg.selectAll('myline')
+          that.svg
+            .selectAll('myline')
             .data(that.data)
             .enter()
             .append('line')
@@ -140,22 +141,26 @@ export default {
             .attr('stroke', 'grey')
 
           const mouseLeave = function (d) {
-            tooltip.transition()
+            tooltip
+              .transition()
               .duration(500)
               .style('opacity', 0)
           }
 
           const mouseMove = function (d) {
-            tooltip.transition()
+            tooltip
+              .transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip.html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
+            tooltip
+              .html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
           }
 
           // Circles
-          that.svg.selectAll('mycircle')
+          that.svg
+            .selectAll('mycircle')
             .data(that.data)
             .enter()
             .append('circle')
