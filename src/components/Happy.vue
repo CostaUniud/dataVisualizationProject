@@ -7,7 +7,7 @@ import { mapGetters, mapActions } from 'vuex'
 import * as d3 from 'd3'
 
 export default {
-  name: 'Lollipop',
+  name: 'Happy',
   data () {
     return {
       width: null,

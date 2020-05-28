@@ -3,7 +3,7 @@
     <Map :fieldYear="fieldYear"/>
     <aside ref="aside">
       <q-scroll-observer @scroll="scrollHandler"/>
-      <div class="range-field" v-if="position < 1500 || (position > 3800 && position < 4500)">
+      <div class="range-field" v-if="position < 1500 || (position >= 3750 && position < 4500)">
         <p class="range-field__label">1985</p>
         <q-slider v-model="fieldYear" color="negative" :min="1985" :max="2016" vertical label />
         <p class="range-field__label">2016</p>
@@ -11,9 +11,9 @@
       <div class="country-field" v-if="position >= 1500 && position < 2800">
         <q-select v-model="fieldCountry" :options="country" label="Country"/>
       </div>
-      <!-- <div class="country-field" v-if="position >= 2800 && position < 3700">
-        <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
-      </div> -->
+      <div class="country-field" v-if="position >= 2800 && position < 3750">
+        <q-select v-model="fieldOrder" :options="order" label="Order By"/>
+      </div>
     </aside>
     <section class="flex pie-area" v-if="sex">
       <h2 class="heading-secondary" style="left: 50%; transform: translate(-50%, 0);">Total world suicides per year</h2>
@@ -32,7 +32,7 @@
       <h2 class="heading-secondary">Trend suicides per country</h2>
       <div class="row">
         <div class="col-1 offset-md-3">
-          <LineChart :fieldCountry="fieldCountry"/>
+          <Trend :fieldCountry="fieldCountry"/>
         </div>
       </div>
     </section>
@@ -40,7 +40,7 @@
       <h2 class="heading-secondary">Relation suicides/happiness in 2015</h2>
       <div class="row lollipop">
         <div class="col-1 offset-md-2">
-          <Lollipop />
+          <Happy :fieldOrder="fieldOrder"/>
         </div>
       </div>
     </section>
@@ -64,8 +64,8 @@ import { mapGetters, mapActions } from 'vuex'
 import { formatMoney } from '@/utils/bt.js'
 import Map from '@/components/Map.vue'
 import SexAge from '@/components/SexAge.vue'
-import LineChart from '@/components/LineChart.vue'
-import Lollipop from '@/components/Lollipop.vue'
+import Trend from '@/components/Trend.vue'
+import Happy from '@/components/Happy.vue'
 import PIL from '@/components/PIL.vue'
 import Methodology from '@/components/Methodology.vue'
 import { scroll } from 'quasar'
@@ -80,15 +80,21 @@ export default {
       options: [
         'Albania'
       ],
+      order: [
+        'Rank Happiness',
+        'Suicides Rate',
+        'Alphabetical'
+      ],
       position: 0,
-      fieldCountry: 'Albania'
+      fieldCountry: 'Albania',
+      fieldOrder: 'Rank Happiness'
     }
   },
   components: {
     Map,
     SexAge,
-    LineChart,
-    Lollipop,
+    Trend,
+    Happy,
     Methodology,
     PIL
   },
