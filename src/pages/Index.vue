@@ -15,7 +15,7 @@
         <q-input v-model.number="fieldNumber" type="number" filled style="max-width: 200px" :rules="[ val => val > 0 && val <= 20 || 'Please use values from 1 to 20']"/>
       </div> -->
     </aside>
-    <section class="flex pie-area">
+    <section class="flex pie-area" v-if="sex">
       <h2 class="heading-secondary" style="left: 50%; transform: translate(-50%, 0);">Total world suicides per year</h2>
       <div class="row" style="margin-top: 7rem">
         <div class="col-1 offset-md-3" style="width: 10rem;">
@@ -108,7 +108,8 @@ export default {
   methods: {
     ...mapActions({
       getTotSuicFromDb: 'suicidi/getTotSuicFromDb',
-      getSexFromDb: 'suicidi/getSexFromDb'
+      getSexFromDb: 'suicidi/getSexFromDb',
+      dbUpdate: 'db/getDbUpdate'
     }),
     formatMoney,
     scrollHandler () {

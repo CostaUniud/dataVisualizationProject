@@ -8,9 +8,6 @@ import * as d3 from 'd3'
 
 export default {
   name: 'Lollipop',
-  // props: {
-  //   fieldNumber: Number
-  // },
   data () {
     return {
       width: null,
@@ -33,17 +30,11 @@ export default {
           await that.lollipop()
         })
     }
-    // fieldNumber: function () {
-    //   if (this.fieldNumber > 0 && this.fieldNumber <= 20) {
-    //     this.updatePlot()
-    //   }
-    // }
   },
   computed: {
     ...mapGetters({
-      happy: 'happiness/getHappy',
       country: 'suicidi/getCountry',
-      getHappySuic: 'happiness/getHappySuic'
+      happySuic: 'happiness/getHappySuic'
     })
   },
   methods: {
@@ -75,7 +66,7 @@ export default {
       // Get the data
       await this.getHappySuicFromDb()
         .then(response => {
-          that.data = that.getHappySuic
+          that.data = that.happySuic
           var a = that.data.map(function (d) { return d.country })
           // X axis
           that.x = d3.scaleBand()
