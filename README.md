@@ -1,6 +1,6 @@
-# Visual History (visual-history)
+# Suicedes in the world
 
-An SPA for visualization history events.
+An SPA for visualization suicides in the world.
 
 ## Install the dependencies
 ```bash
