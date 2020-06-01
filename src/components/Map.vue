@@ -96,7 +96,7 @@ export default {
       // Data and color scale
       var data = d3.map()
       that.colorScale = d3.scaleThreshold()
-        .domain([1, 5, 10, 15])
+        .domain([0, 5, 10, 15])
         .range(d3.schemeReds[7])
       // Tooltip
       var tooltip = d3.select('#map')
@@ -112,10 +112,12 @@ export default {
       await d3.json('/statics/suicide/world.json')
         .then(world => {
           for (var key in that.suicidi) {
-            that.dataTable.push({
-              country: key,
-              rate: that.suicidi[key]
-            })
+            if (!isNaN(that.suicidi[key])) {
+              that.dataTable.push({
+                country: key,
+                rate: that.suicidi[key]
+              })
+            }
             data.set(key, that.suicidi[key])
           }
 
@@ -154,7 +156,7 @@ export default {
               .duration(200)
               .style('opacity', 1)
             tooltip
-              .html('<span>' + d.properties.name + '</span><br><span>' + (d.total === 0 ? 'No data' : d.total) + '</span>')
+              .html('<span>' + d.properties.name + '</span><br><span>' + (isNaN(d.total) ? 'No data' : d.total) + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 70) + 'px')
           }
@@ -172,14 +174,14 @@ export default {
             )
             // set the color of each country
             .attr('fill', function (d) {
-              d.total = data.get(d.properties.name) || 0
-              if (d.total === 0) {
+              d.total = data.get(d.properties.name)
+              if (isNaN(d.total)) {
                 return '#B8B8B9'
               }
               return that.colorScale(d.total)
             })
             .style('stroke', 'transparent')
-            .attr('class', function (d) { return 'Country' })
+            .attr('class', d => 'Country')
             .style('opacity', 0.8)
             .on('mouseover', mouseOver)
             .on('mouseout', mouseLeave)
@@ -192,7 +194,7 @@ export default {
             .enter()
             .append('rect')
             .attr('x', 0)
-            .attr('y', function (d, i) { return 600 + i * (size + 5) })
+            .attr('y', (d, i) => 600 + i * (size + 5))
             .attr('width', size)
             .attr('height', size)
             .style('fill', function (d) {
@@ -206,9 +208,9 @@ export default {
             .enter()
             .append('text')
             .attr('x', 0 + size * 1.2)
-            .attr('y', function (d, i) { return 600 + i * (size + 5) + (size / 2) })
+            .attr('y', (d, i) => 600 + i * (size + 5) + (size / 2))
             .style('fill', 'black')
-            .text(function (d) { return d })
+            .text(d => d)
             .attr('text-anchor', 'left')
             .style('alignment-baseline', 'middle')
         })
@@ -219,17 +221,19 @@ export default {
       that.dataTable = []
 
       for (var key in that.suicidi) {
-        that.dataTable.push({
-          country: key,
-          rate: that.suicidi[key]
-        })
+        if (!isNaN(that.suicidi[key])) {
+          that.dataTable.push({
+            country: key,
+            rate: that.suicidi[key]
+          })
+        }
         data.set(key, that.suicidi[key])
       }
 
       that.svg.selectAll('path')
         .attr('fill', function (d) {
-          d.total = data.get(d.properties.name) || 0
-          if (d.total === 0) {
+          d.total = data.get(d.properties.name)
+          if (isNaN(d.total)) {
             return '#B8B8B9'
           }
           return that.colorScale(d.total)

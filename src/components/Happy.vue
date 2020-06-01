@@ -8,6 +8,9 @@ import * as d3 from 'd3'
 
 export default {
   name: 'Happy',
+  props: {
+    fieldOrder: String
+  },
   data () {
     return {
       width: null,
@@ -16,7 +19,8 @@ export default {
       data: null,
       x: null,
       y: null,
-      xAxis: null
+      xAxis: null,
+      tooltip: null
     }
   },
   async mounted () {
@@ -29,6 +33,9 @@ export default {
         .then(async () => {
           await that.lollipop()
         })
+    },
+    fieldOrder: async function () {
+      this.updateLolli()
     }
   },
   computed: {
@@ -58,7 +65,7 @@ export default {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
       // Tooltip
-      var tooltip = d3.select('#lollipop')
+      that.tooltip = d3.select('#lollipop')
         .append('div')
         .attr('class', 'tooltip')
         .style('opacity', 0)
@@ -76,6 +83,7 @@ export default {
             .paddingOuter(1)
           that.svg
             .append('g')
+            .attr('class', 'myYaxis')
             .attr('transform', 'translate(0,' + that.height + ')')
             .call(d3.axisBottom(that.x).tickFormat(
               function (d, i) {
@@ -132,18 +140,18 @@ export default {
             .attr('stroke', 'grey')
 
           const mouseLeave = function (d) {
-            tooltip
+            that.tooltip
               .transition()
               .duration(500)
               .style('opacity', 0)
           }
 
           const mouseMove = function (d) {
-            tooltip
+            that.tooltip
               .transition()
               .duration(200)
               .style('opacity', 1)
-            tooltip
+            that.tooltip
               .html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
               .style('left', (d3.event.pageX) + 'px')
               .style('top', (d3.event.pageY - 30) + 'px')
@@ -163,6 +171,113 @@ export default {
             .on('mouseleave', mouseLeave)
             .on('mousemove', mouseMove)
         })
+    },
+    updateLolli () {
+      var that = this
+      var order
+      switch (that.fieldOrder) {
+        case 'Rank Happiness':
+          order = 'rank'
+          break
+        case 'Suicides Rate':
+          order = 'rate'
+          break
+        case 'Alphabetical':
+          order = 'country'
+          break
+        default:
+          order = 'rank'
+          break
+      }
+
+      that.x = d3.scaleBand()
+        .domain(that.happySuic.map(function (d) { return d[order] }))
+        .range([0, that.width])
+        .paddingInner(5)
+        .paddingOuter(1)
+      if (order === 'country') {
+        console.log('entro')
+        that.svg
+          .selectAll('.myYaxis')
+          .transition()
+          .duration(1000)
+          .call(d3.axisBottom(that.x))
+          .selectAll('text')
+          .attr('transform', 'translate(-10,0)rotate(-45)')
+          .style('text-anchor', 'end')
+          .attr('font-size', '1.5rem')
+      } else {
+        var a = that.happySuic.map(function (d) { return d.country })
+        that.svg
+          .selectAll('.myYaxis')
+          .transition()
+          .duration(1000)
+          .call(d3.axisBottom(that.x).tickFormat(
+            function (d, i) {
+              if (a[i] === 'United States of America') {
+                return 'U.S.A.'
+              }
+              return a[i]
+            })
+          )
+          .selectAll('text')
+          .attr('transform', 'translate(-10,0)rotate(-45)')
+          .style('text-anchor', 'end')
+          .attr('font-size', '1.5rem')
+      }
+
+      const mouseLeave = function (d) {
+        that.tooltip
+          .transition()
+          .duration(500)
+          .style('opacity', 0)
+      }
+
+      const mouseMove = function (d) {
+        that.tooltip
+          .transition()
+          .duration(200)
+          .style('opacity', 1)
+        that.tooltip
+          .html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
+          .style('left', (d3.event.pageX) + 'px')
+          .style('top', (d3.event.pageY - 30) + 'px')
+      }
+
+      // Lines
+      var lines = that.svg
+        .selectAll('myline')
+        .data(that.happySuic)
+      lines.exit().remove()
+      lines
+        .enter()
+        .append('line')
+        .merge(lines)
+        .transition()
+        .duration(500)
+        .attr('x1', function (d) { return that.x(d[order]) })
+        .attr('x2', function (d) { return that.x(d[order]) })
+        .attr('y1', function (d) { return that.y(d.rate) })
+        .attr('y2', that.y(0))
+        .attr('stroke', 'grey')
+      // Circles
+      var circles = that.svg
+        .selectAll('mycircle')
+        .data(that.happySuic)
+      circles.exit().remove()
+      circles
+        .enter()
+        .append('circle')
+        .on('mouseleave', mouseLeave)
+        .on('mousemove', mouseMove)
+        .merge(circles)
+        .transition()
+        .duration(500)
+        .attr('cx', function (d) { return that.x(d[order]) })
+        .attr('cy', function (d) { return that.y(d.rate) })
+        .attr('r', '4')
+        .style('fill', '#69b3a2')
+        .attr('stroke', 'black')
     }
     // async scatter () {
     //   var that = this

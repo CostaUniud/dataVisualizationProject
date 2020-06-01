@@ -20,7 +20,9 @@ export default {
       x: null,
       yAxis: null,
       y: null,
-      line: null
+      line: null,
+      linea1: null,
+      linea2: null
     }
   },
   watch: {
@@ -111,30 +113,26 @@ export default {
         .attr('fill', 'black')
         .attr('font-size', '2rem')
 
+      that.line = d3.line()
+        .defined(d => !(!d.n))
+        .x(d => that.x(d.y))
+        .y(d => that.y(d.n))
+        .curve(d3.curveMonotoneX)
+
+      that.linea1 = that.svg
+        .append('path')
+        .datum(data.filter(that.line.defined()))
+        .attr('fill', 'none')
+        .attr('d', that.line)
+
       // Add the line
-      that.line = that.svg
-        .append('g')
+      that.linea2 = that.svg
         .append('path')
         .datum(data)
         .attr('fill', 'none')
         .attr('stroke', 'steelblue')
         .attr('stroke-width', 3)
-        .attr('d', d3.line()
-          .x(function (d) { return that.x(d.y) })
-          .y(function (d) { return that.y(d.n) })
-          .curve(d3.curveMonotoneX) // apply smoothing to the line
-        )
-
-      // Dot
-      // that.svg.selectAll('.dot')
-      //   .data(data)
-      //   .enter()
-      //   .append('circle')
-      //   .attr('class', 'dot')
-      //   .attr('cx', function (d) { return that.x(d.y) })
-      //   .attr('cy', function (d) { return that.y(d.n) })
-      //   .attr('r', 5)
-      //   .attr('fill', 'steelblue')
+        .attr('d', that.line)
     },
     lineUpdate () {
       var that = this
@@ -166,30 +164,28 @@ export default {
         .selectAll('.label')
         .attr('font-size', '2rem')
 
+      that.line = d3.line()
+        .defined(d => !(!d.n))
+        .x(d => that.x(d.y))
+        .y(d => that.y(d.n))
+        .curve(d3.curveMonotoneX)
+
+      that.linea1
+        .datum(data.filter(that.line.defined()))
+        .transition()
+        .duration(600)
+        .attr('fill', 'none')
+        .attr('d', that.line)
+
       // Add the line
-      that.line
+      that.linea2
         .datum(data)
         .transition()
         .duration(600)
         .attr('fill', 'none')
         .attr('stroke', 'steelblue')
         .attr('stroke-width', 3)
-        .attr('d', d3.line()
-          .x(function (d) { return that.x(d.y) })
-          .y(function (d) { return that.y(d.n) })
-          .curve(d3.curveMonotoneX) // apply smoothing to the line
-        )
-
-      // Dot - SISTEMARE PUNTI
-      // that.svg.selectAll('.dot')
-      //   .data(data)
-      //   .enter()
-      //   .append('circle')
-      //   .attr('class', 'dot')
-      //   .attr('cx', function (d) { return that.x(d.y) })
-      //   .attr('cy', function (d) { return that.y(d.n) })
-      //   .attr('r', 5)
-      //   .attr('fill', 'steelblue')
+        .attr('d', that.line)
     }
   }
 }

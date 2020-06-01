@@ -90,7 +90,7 @@ export default {
         .enter()
         .append('g')
         .attr('class', 'legend')
-        .attr('transform', function (d, i) { return 'translate(0,' + i * 20 + ')' })
+        .attr('transform', (d, i) => 'translate(0,' + i * 20 + ')')
 
       legend
         .append('rect')
@@ -105,7 +105,7 @@ export default {
         .attr('y', 3.5)
         .attr('dy', '.35em')
         .style('text-anchor', 'end')
-        .text(function (d) { return d })
+        .text(d => d)
 
       that.updateBar()
     },
@@ -114,7 +114,7 @@ export default {
       that.data = that.sexAge
 
       var subgroups = ['male', 'female']
-      var groups = d3.map(that.data, function (d) { return d.age }).keys()
+      var groups = d3.map(that.data, d => d.age).keys()
 
       // X axis
       that.x
@@ -128,7 +128,7 @@ export default {
 
       // Add Y axis
       that.y
-        // .domain([0, d3.max(that.data, function (d) { return d.suic })])
+        // .domain([0, d3.max(that.data, d => return d.suic)])
         .domain([0, 100000])
       that.yAxis
         // .transition()
@@ -137,7 +137,7 @@ export default {
         .selectAll('text')
         .attr('font-size', '1.2rem')
 
-      // Another scale for subgroup position?
+      // Another scale for subgroup position
       that.xSubgroup = d3.scaleBand()
         .domain(subgroups)
         .range([0, that.x.bandwidth()])
@@ -150,7 +150,7 @@ export default {
         .enter()
         .append('g')
         .classed('layer', true)
-        .attr('transform', function (d) { return 'translate(' + that.x(d.age) + ',0)' })
+        .attr('transform', d => 'translate(' + that.x(d.age) + ',0)')
       barGroups.exit().remove()
 
       var bars = that.svg
@@ -165,17 +165,17 @@ export default {
         .enter()
         .append('rect')
         .attr('width', that.xSubgroup.bandwidth())
-        .attr('x', function (d) { return that.xSubgroup(d.key) })
-        .attr('fill', function (d) { return that.color(d.key) })
+        .attr('x', d => that.xSubgroup(d.key))
+        .attr('fill', d => that.color(d.key))
         .transition()
         .duration(750)
-        .attr('y', function (d) { return that.y(d.value) })
-        .attr('height', function (d) { return that.height - that.y(d.value) })
+        .attr('y', d => that.y(d.value))
+        .attr('height', d => that.height - that.y(d.value))
       bars
         .transition()
         .duration(750)
-        .attr('y', function (d) { return that.y(d.value) })
-        .attr('height', function (d) { return that.height - that.y(d.value) })
+        .attr('y', d => that.y(d.value))
+        .attr('height', d => that.height - that.y(d.value))
       bars.exit().remove()
     }
   }

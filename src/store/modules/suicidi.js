@@ -162,59 +162,66 @@ const actions = {
         .then(async db => {
           await db.transaction(function (tx) {
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'Russia'
-                            WHERE country = 'Russian Federation'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'Dominican Republic'
+            WHERE country = 'Dominica'
+            `)
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'United States of America'
-                            WHERE country = 'United States'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'Mauritania'
+            WHERE country = 'Mauritius'
+            `)
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'Republic of Serbia'
-                            WHERE country = 'Serbia'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'Republic of Serbia'
+            WHERE country = 'Serbia'
+            `)
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'South Korea'
-                            WHERE country = 'Republic of Korea'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'Russia'
+            WHERE country = 'Russian Federation'
+            `)
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'The Bahamas'
-                            WHERE country = 'Bahamas'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'South Korea'
+            WHERE country = 'Republic of Korea'
+            `)
             tx.executeSql(`UPDATE suicidi
-                            SET country = 'Mauritania'
-                            WHERE country = 'Mauritius'
-                          `,
-            [],
-            function (tx, resultSet) {
-            }, function (error) {
-              reject(error)
-            })
+            SET country = 'The Bahamas'
+            WHERE country = 'Bahamas'
+            `)
+            tx.executeSql(`UPDATE suicidi
+            SET country = 'United States of America'
+            WHERE country = 'United States'
+            `)
+            tx.executeSql(
+              `CREATE VIEW IF NOT EXISTS y
+              AS
+              SELECT DISTINCT year
+              FROM suicidi
+              ORDER BY year`)
+            tx.executeSql(
+              `CREATE VIEW IF NOT EXISTS c
+              AS
+              SELECT DISTINCT country
+              FROM suicidi
+              ORDER BY country`)
+            tx.executeSql(
+              `CREATE VIEW IF NOT EXISTS countrYear
+              AS
+              SELECT *
+              FROM c
+              CROSS JOIN y`)
+            tx.executeSql(
+              `SELECT *
+              FROM countrYear`,
+              [],
+              function (tx, resultSet) {
+                for (let r = 0; r < resultSet.rows.length; r++) {
+                  tx.executeSql(`INSERT INTO suicidi(
+                                  country,
+                                  year
+                                  ) VALUES (?,?)`,
+                  [resultSet.rows.item(r).country, resultSet.rows.item(r).year])
+                }
+              }, function (error) {
+                reject(error)
+              })
           }, function (error) {
             reject(error)
           }, function () {
@@ -409,11 +416,13 @@ const actions = {
               function (tx, resultSet) {
                 const a = []
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  a.push({
-                    country: resultSet.rows.item(r).country,
-                    rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
-                    gdpYear: resultSet.rows.item(r).gdpYear
-                  })
+                  if (resultSet.rows.item(r).gdpYear !== null) {
+                    a.push({
+                      country: resultSet.rows.item(r).country,
+                      rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
+                      gdpYear: resultSet.rows.item(r).gdpYear
+                    })
+                  }
                 }
                 context.commit('setPil', a)
               }, function (error) {
@@ -442,11 +451,13 @@ const actions = {
               function (tx, resultSet) {
                 const a = []
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  a.push({
-                    sex: resultSet.rows.item(r).sex,
-                    age: resultSet.rows.item(r).age,
-                    suic: resultSet.rows.item(r).somma_suicidi
-                  })
+                  if (resultSet.rows.item(r).sex !== null) {
+                    a.push({
+                      sex: resultSet.rows.item(r).sex,
+                      age: resultSet.rows.item(r).age,
+                      suic: resultSet.rows.item(r).somma_suicidi
+                    })
+                  }
                 }
                 context.commit('setSexAge', a)
               }, function (error) {

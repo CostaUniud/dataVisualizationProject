@@ -157,11 +157,13 @@ const actions = {
               function (tx, resultSet) {
                 const a = []
                 for (let r = 0; r < resultSet.rows.length; r++) {
-                  a.push({
-                    country: resultSet.rows.item(r).country,
-                    rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
-                    rank: resultSet.rows.item(r).rank
-                  })
+                  if (resultSet.rows.item(r).somma_suicidi !== null) {
+                    a.push({
+                      country: resultSet.rows.item(r).country,
+                      rate: Math.round(((resultSet.rows.item(r).somma_suicidi / resultSet.rows.item(r).somma_popolazione) * 100000)),
+                      rank: resultSet.rows.item(r).rank
+                    })
+                  }
                 }
                 context.commit('setHappySuic', a)
               }, function (error) {
