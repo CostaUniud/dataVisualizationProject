@@ -411,7 +411,8 @@ const actions = {
               `SELECT country, SUM(suicidi.suicides) AS somma_suicidi, SUM(suicidi.population) AS somma_popolazione, gdpYear
               FROM suicidi
               WHERE year = ?
-              GROUP BY country`,
+              GROUP BY country
+              ORDER BY length(gdpYear), gdpYear ASC`,
               [year],
               function (tx, resultSet) {
                 const a = []
@@ -454,7 +455,7 @@ const actions = {
                   if (resultSet.rows.item(r).sex !== null) {
                     a.push({
                       sex: resultSet.rows.item(r).sex,
-                      age: resultSet.rows.item(r).age,
+                      age: resultSet.rows.item(r).age.replace(' years', ''),
                       suic: resultSet.rows.item(r).somma_suicidi
                     })
                   }

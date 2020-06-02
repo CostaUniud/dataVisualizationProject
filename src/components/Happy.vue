@@ -20,7 +20,9 @@ export default {
       x: null,
       y: null,
       xAxis: null,
-      tooltip: null
+      tooltip: null,
+      array: null,
+      order: null
     }
   },
   async mounted () {
@@ -35,7 +37,11 @@ export default {
         })
     },
     fieldOrder: async function () {
-      this.updateLolli()
+      var that = this
+      await that.getHappySuicFromDb(that.fieldOrder)
+        .then(() => {
+          that.updateLolli()
+        })
     }
   },
   computed: {
@@ -71,36 +77,20 @@ export default {
         .style('opacity', 0)
 
       // Get the data
-      await this.getHappySuicFromDb()
+      await this.getHappySuicFromDb('Rank Happiness')
         .then(response => {
-          that.data = that.happySuic
-          var a = that.data.map(function (d) { return d.country })
           // X axis
           that.x = d3.scaleBand()
-            .domain(that.data.map(function (d) { return d.rank }))
             .range([0, that.width])
             .paddingInner(5)
             .paddingOuter(1)
-          that.svg
+          that.xAxis = that.svg
             .append('g')
-            .attr('class', 'myYaxis')
             .attr('transform', 'translate(0,' + that.height + ')')
-            .call(d3.axisBottom(that.x).tickFormat(
-              function (d, i) {
-                if (a[i] === 'United States of America') {
-                  return 'U.S.A.'
-                }
-                return a[i]
-              })
-            )
-            .selectAll('text')
-            .attr('transform', 'translate(-10,0)rotate(-45)')
-            .style('text-anchor', 'end')
-            .attr('font-size', '1.5rem')
 
           that.svg
             .append('text')
-            .attr('class', 'label')
+            .attr('class', 'label-happy')
             .attr('dx', that.width / 2)
             .attr('dy', '75rem')
             .attr('x', 6)
@@ -111,120 +101,83 @@ export default {
 
           // Add Y axis
           that.y = d3.scaleLinear()
-            .domain([0, 40])
             .range([that.height, 0])
-          that.svg
+          that.yAxis = that.svg
             .append('g')
-            .call(d3.axisLeft(that.y))
+            .attr('class', 'myYaxis')
+
+          that.svg
             .append('text')
             .attr('class', 'label')
             .attr('transform', 'rotate(-90)')
-            .attr('dx', -(that.height / 2.3))
-            .attr('dy', '-4rem')
+            .attr('dx', -(that.height / 1.7))
+            .attr('dy', '-5rem')
             .attr('y', 6)
-            .style('text-anchor', 'end')
             .text('Suicides rate')
             .attr('fill', 'black')
             .attr('font-size', '2rem')
-
-          // Lines
-          that.svg
-            .selectAll('myline')
-            .data(that.data)
-            .enter()
-            .append('line')
-            .attr('x1', function (d) { return that.x(d.rank) })
-            .attr('x2', function (d) { return that.x(d.rank) })
-            .attr('y1', function (d) { return that.y(d.rate) })
-            .attr('y2', that.y(0))
-            .attr('stroke', 'grey')
-
-          const mouseLeave = function (d) {
-            that.tooltip
-              .transition()
-              .duration(500)
-              .style('opacity', 0)
-          }
-
-          const mouseMove = function (d) {
-            that.tooltip
-              .transition()
-              .duration(200)
-              .style('opacity', 1)
-            that.tooltip
-              .html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
-              .style('left', (d3.event.pageX) + 'px')
-              .style('top', (d3.event.pageY - 30) + 'px')
-          }
-
-          // Circles
-          that.svg
-            .selectAll('mycircle')
-            .data(that.data)
-            .enter()
-            .append('circle')
-            .attr('cx', function (d) { return that.x(d.rank) })
-            .attr('cy', function (d) { return that.y(d.rate) })
-            .attr('r', '4')
-            .style('fill', '#69b3a2')
-            .attr('stroke', 'black')
-            .on('mouseleave', mouseLeave)
-            .on('mousemove', mouseMove)
         })
+
+      that.updateLolli()
     },
     updateLolli () {
       var that = this
-      var order
+
       switch (that.fieldOrder) {
         case 'Rank Happiness':
-          order = 'rank'
+          that.order = 'rank'
           break
         case 'Suicides Rate':
-          order = 'rate'
+          that.order = 'rate'
           break
         case 'Alphabetical':
-          order = 'country'
+          that.order = 'country'
           break
         default:
-          order = 'rank'
+          that.order = 'rank'
           break
       }
 
-      that.x = d3.scaleBand()
-        .domain(that.happySuic.map(function (d) { return d[order] }))
-        .range([0, that.width])
-        .paddingInner(5)
-        .paddingOuter(1)
-      if (order === 'country') {
-        console.log('entro')
+      that.data = that.happySuic
+      var a = that.data.map(d => d.country)
+
+      that.x
+        .domain(that.data.map(d => d[that.order]))
+      that.xAxis
+        .transition()
+        .duration(1000)
+        .call(d3.axisBottom(that.x).tickFormat(
+          function (d, i) {
+            if (a[i] === 'United States of America') {
+              return 'U.S.A.'
+            }
+            return a[i]
+          })
+        )
+        .selectAll('text')
+        .attr('transform', 'translate(-10,0)rotate(-45)')
+        .style('text-anchor', 'end')
+        .attr('font-size', '1.5rem')
+
+      if (that.order === 'country') {
         that.svg
-          .selectAll('.myYaxis')
+          .selectAll('.label-happy')
           .transition()
-          .duration(1000)
-          .call(d3.axisBottom(that.x))
-          .selectAll('text')
-          .attr('transform', 'translate(-10,0)rotate(-45)')
-          .style('text-anchor', 'end')
-          .attr('font-size', '1.5rem')
+          .duration(500)
+          .text('Country')
       } else {
-        var a = that.happySuic.map(function (d) { return d.country })
         that.svg
-          .selectAll('.myYaxis')
+          .selectAll('.label-happy')
           .transition()
-          .duration(1000)
-          .call(d3.axisBottom(that.x).tickFormat(
-            function (d, i) {
-              if (a[i] === 'United States of America') {
-                return 'U.S.A.'
-              }
-              return a[i]
-            })
-          )
-          .selectAll('text')
-          .attr('transform', 'translate(-10,0)rotate(-45)')
-          .style('text-anchor', 'end')
-          .attr('font-size', '1.5rem')
+          .duration(500)
+          .text('Happiness')
       }
+
+      // Add Y axis
+      that.y
+        .domain([0, 60])
+      that.yAxis
+        .call(d3.axisLeft(that.y))
 
       const mouseLeave = function (d) {
         that.tooltip
@@ -246,24 +199,25 @@ export default {
 
       // Lines
       var lines = that.svg
-        .selectAll('myline')
-        .data(that.happySuic)
+        .selectAll('.myLine')
+        .data(that.data)
       lines.exit().remove()
       lines
         .enter()
         .append('line')
+        .attr('class', 'myLine')
         .merge(lines)
         .transition()
         .duration(500)
-        .attr('x1', function (d) { return that.x(d[order]) })
-        .attr('x2', function (d) { return that.x(d[order]) })
-        .attr('y1', function (d) { return that.y(d.rate) })
+        .attr('x1', d => that.x(d[that.order]))
+        .attr('x2', d => that.x(d[that.order]))
+        .attr('y1', d => that.y(d.rate))
         .attr('y2', that.y(0))
         .attr('stroke', 'grey')
       // Circles
       var circles = that.svg
-        .selectAll('mycircle')
-        .data(that.happySuic)
+        .selectAll('circle')
+        .data(that.data)
       circles.exit().remove()
       circles
         .enter()
@@ -273,34 +227,12 @@ export default {
         .merge(circles)
         .transition()
         .duration(500)
-        .attr('cx', function (d) { return that.x(d[order]) })
-        .attr('cy', function (d) { return that.y(d.rate) })
+        .attr('cx', d => that.x(d[that.order]))
+        .attr('cy', d => that.y(d.rate))
         .attr('r', '4')
         .style('fill', '#69b3a2')
         .attr('stroke', 'black')
     }
-    // async scatter () {
-    //   var that = this
-    //   // set the dimensions and margins of the graph
-    //   var margin = { top: 10, right: 30, bottom: 50, left: 60 }
-    //   that.width = 800 - margin.left - margin.right
-    //   that.height = 740 - margin.top - margin.bottom
-
-    //   // append the svg object to the body of the page
-    //   that.svg = d3.select('#scatter')
-    //     .append('svg')
-    //     .attr('width', that.width + margin.left + margin.right)
-    //     .attr('height', that.height + margin.top + margin.bottom)
-    //     .append('g')
-    //     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')').text('Year')
-    //     .attr('fill', 'black')
-
-    //   // Tooltip
-    //   var tooltip = d3.select('#scatter')
-    //     .append('div')
-    //     .attr('class', 'tooltip')
-    //     .style('opacity', 0)
-
     //   // Get the data
     //   await this.getHappySuicFromDb()
     //     .then(response => {
@@ -315,93 +247,6 @@ export default {
     //       //   }
     //       // }
     //       // })
-    //       that.data = that.getHappySuic
-    //       // Add X axis
-    //       that.x = d3.scaleLinear()
-    //         .domain([160, 0])
-    //         .range([0, that.width])
-    //       that.xAxis = that.svg.append('g')
-    //         .attr('transform', 'translate(0,' + that.height + ')')
-    //         .call(d3.axisBottom(that.x))
-    //         .append('text')
-    //         .attr('class', 'label')
-    //         .attr('dx', that.width / 1.7)
-    //         .attr('dy', '4.5rem')
-    //         .attr('x', 6)
-    //         .style('text-anchor', 'end')
-    //         .text('Rank happiness')
-    //         .attr('fill', 'black')
-    //         .attr('font-size', '2rem')
-
-    //       // Add Y axis
-    //       that.y = d3.scaleLinear()
-    //         .domain([0, 160])
-    //         .range([that.height, 0])
-    //       that.svg.append('g')
-    //         .call(d3.axisLeft(that.y))
-    //         .append('text')
-    //         .attr('class', 'label')
-    //         .attr('transform', 'rotate(-90)')
-    //         .attr('dx', -(that.height / 2.3))
-    //         .attr('dy', '-4rem')
-    //         .attr('y', 6)
-    //         .style('text-anchor', 'end')
-    //         .text('Suicides rate')
-    //         .attr('fill', 'black')
-    //         .attr('font-size', '2rem')
-
-    //       const mouseLeave = function (d) {
-    //         tooltip.transition()
-    //           .duration(500)
-    //           .style('opacity', 0)
-    //       }
-
-    //       const mouseMove = function (d) {
-    //         tooltip.transition()
-    //           .duration(200)
-    //           .style('opacity', 1)
-    //         tooltip.html('<div>' + d.country + '</div><span>Rank: ' + d.rank + '</span><br><span>Rate: ' + d.rate + '</span>')
-    //           .style('left', (d3.event.pageX) + 'px')
-    //           .style('top', (d3.event.pageY - 30) + 'px')
-    //       }
-
-    //       // Add dots
-    //       that.svg.append('g')
-    //         .selectAll('dot')
-    //         .data(that.data)
-    //         .enter()
-    //         .append('circle')
-    //         .attr('cx', function (d) { return that.x(d.rank) })
-    //         .attr('cy', function (d) { return that.y(d.rate) })
-    //         .attr('r', 5)
-    //         .style('fill', '#69b3a2')
-    //         .on('mouseleave', mouseLeave)
-    //         .on('mousemove', mouseMove)
-    //     })
-    // },
-    // updatePlot () {
-    //   var that = this
-
-    //   // Update X axis
-    //   that.x
-    //     .domain([160, 1 * that.fieldNumber])
-    //   that.xAxis
-    //     .transition()
-    //     .duration(1000)
-    //     .call(d3.axisBottom(that.x))
-
-    //   that.svg.selectAll('.label')
-    //     .attr('fill', 'black')
-    //     .attr('font-size', '2rem')
-
-    //   // Update chart
-    //   that.svg.selectAll('circle')
-    //     .data(that.data)
-    //     .transition()
-    //     .duration(1000)
-    //     .attr('cx', function (d) { return that.x(d.rank) })
-    //     .attr('cy', function (d) { return that.y(d.rate) })
-    // },
   }
 }
 </script>

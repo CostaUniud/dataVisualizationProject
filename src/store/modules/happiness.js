@@ -141,19 +141,40 @@ const actions = {
         })
     })
   },
-  getHappySuicFromDb (context) {
+  getHappySuicFromDb (context, order) {
     return new Promise((resolve, reject) => {
       store.dispatch('db/open')
         .then((db) => {
           db.transaction(function (tx) {
-            tx.executeSql(
-              `SELECT country, SUM(s.suicides) AS somma_suicidi, SUM(s.population) AS somma_popolazione, h.rank
-              FROM suicidi s
-              INNER JOIN happiness h USING(country)
-              WHERE s.year = 2015
-              GROUP BY country
-              ORDER BY h.rank DESC`,
-              [],
+            var s
+            switch (order) {
+              case 'Rank Happiness':
+                s = `SELECT country, SUM(s.suicides) AS somma_suicidi, SUM(s.population) AS somma_popolazione, h.rank
+                FROM suicidi s
+                INNER JOIN happiness h USING(country)
+                WHERE s.year = 2015
+                GROUP BY country
+                ORDER BY h.rank DESC`
+                break
+              case 'Alphabetical':
+                s = `SELECT country, SUM(s.suicides) AS somma_suicidi, SUM(s.population) AS somma_popolazione, h.rank
+                FROM suicidi s
+                INNER JOIN happiness h USING(country)
+                WHERE s.year = 2015
+                GROUP BY country
+                ORDER BY country ASC`
+                break
+              default:
+                s = `SELECT country, SUM(s.suicides) AS somma_suicidi, SUM(s.population) AS somma_popolazione, h.rank
+                FROM suicidi s
+                INNER JOIN happiness h USING(country)
+                WHERE s.year = 2015
+                GROUP BY country
+                ORDER BY h.rank DESC`
+                break
+            }
+
+            tx.executeSql(s, [],
               function (tx, resultSet) {
                 const a = []
                 for (let r = 0; r < resultSet.rows.length; r++) {

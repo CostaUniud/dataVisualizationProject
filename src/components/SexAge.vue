@@ -48,7 +48,7 @@ export default {
     bar () {
       var that = this
       // Set the dimensions and margins of the graph
-      var margin = { top: 30, right: 30, bottom: 70, left: 60 }
+      var margin = { top: 30, right: 30, bottom: 70, left: 100 }
       that.width = 860 - margin.left - margin.right
       that.height = 800 - margin.top - margin.bottom
 
@@ -83,6 +83,29 @@ export default {
       that.color = d3.scaleOrdinal()
         .range(['#e41a1c', '#377eb8'])
 
+      that.svg
+        .append('text')
+        .attr('class', 'label')
+        .attr('dx', that.width / 2)
+        .attr('dy', '75rem')
+        .attr('x', 6)
+        .style('text-anchor', 'end')
+        .text('Age')
+        .attr('fill', 'black')
+        .attr('font-size', '2rem')
+
+      that.svg
+        .append('text')
+        .attr('class', 'label')
+        .attr('transform', 'rotate(-90)')
+        .attr('dx', -(that.height / 2))
+        .attr('dy', '-8rem')
+        .attr('y', 6)
+        .style('text-anchor', 'end')
+        .text('Suicides')
+        .attr('fill', 'black')
+        .attr('font-size', '2rem')
+
       // Legend
       var legend = that.svg
         .selectAll('.legend')
@@ -114,7 +137,7 @@ export default {
       that.data = that.sexAge
 
       var subgroups = ['male', 'female']
-      var groups = d3.map(that.data, d => d.age).keys()
+      var groups = ['5-14', '15-24', '25-34', '35-54', '55-74', '75+'] // d3.map(that.data, d => d.age).keys()
 
       // X axis
       that.x
