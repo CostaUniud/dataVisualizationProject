@@ -65,7 +65,7 @@ export default {
 
       // Add X axis
       that.x = d3.scaleLinear()
-        .domain(d3.extent(data, function (d) { return d.y }))
+        .domain(d3.extent(data, d => d.y))
         .range([0, that.width])
       that.xAxis = d3.axisBottom()
         .scale(that.x)
@@ -90,7 +90,7 @@ export default {
 
       // Add Y axis
       that.y = d3.scaleLinear()
-        .domain([0, d3.max(data, function (d) { return d.n })])
+        .domain([0, d3.max(data, d => d.n)])
         .range([that.height, 0])
       that.yAxis = d3.axisLeft()
         .scale(that.y)
@@ -140,7 +140,7 @@ export default {
 
       // Add X axis
       that.x
-        .domain(d3.extent(data, function (d) { return d.y }))
+        .domain(d3.extent(data, d => d.y))
       that.svg
         .selectAll('.myXaxis')
         .transition()
@@ -151,7 +151,7 @@ export default {
 
       // Add Y axis
       that.y
-        .domain([0, d3.max(data, function (d) { return d.n })])
+        .domain([0, d3.max(data, d => d.n)])
       that.svg
         .selectAll('.myYaxis')
         .transition()

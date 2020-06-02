@@ -81,8 +81,7 @@ export default {
         'Albania'
       ],
       order: [
-        'Rank Happiness',
-        'Suicides Rate',
+        'Rank Happiness', // 'Suicides Rate',
         'Alphabetical'
       ],
       position: 0,
