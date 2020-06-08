@@ -8,8 +8,8 @@
           <h4 class="heading-quaternary">Visual languages for complex systems's project - University of Udine</h4>
         </q-toolbar-title>
         <div class="q-toolbar-author">
-          <span class="q-toolbar-author__name">Pepe Federico, professor</span>
-          <span class="q-toolbar-author__name">Costantino Luca, student</span>
+          <span class="q-toolbar-author__name"><span class="text-weight-bold">Pepe Federico</span>, professor</span>
+          <span class="q-toolbar-author__name"><span class="text-weight-bold">Costantino Luca</span>, student</span>
         </div>
       </q-toolbar>
     </q-header>
