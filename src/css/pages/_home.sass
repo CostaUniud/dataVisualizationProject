@@ -1,29 +1,40 @@
 section
   height: 100vh
   width: 100vw
-.pie-area
-  // position: relative
-  text-align: center
-  h2
-    position: absolute
-  p
-    display: inline-block
-    text-align: center
-    width: 30rem
-    font-size: 6rem
-    line-height: 8rem
-    margin: 4rem 0
-    span
+
+.total-area
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  &__main
+    display: flex
+    flex-wrap: wrap
+    justify-content: space-around
+    flex: 0 0 100%
+    margin-top: 5rem
+  &__number
+    display: flex
+    flex-direction: column
+    @media only screen and (max-width: $bp-largest)
+      flex-direction: row
+      justify-content: center
+      flex: 0 0 100%
+    p
       display: inline-block
       text-align: center
-    .value
-      font-weight: bold
-    .male
-      color: #377eb8
-    .female
-      color: #e41a1c
-  // .sex
-  //   font-size: 6.3rem
+      width: 30rem
+      font-size: 6rem
+      line-height: 8rem
+      margin: 4rem 0
+      span
+        display: inline-block
+        text-align: center
+      .value
+        font-weight: bold
+      .male
+        color: #377eb8
+      .female
+        color: #e41a1c
   svg
     // Etichette della leggenda
     text
@@ -39,21 +50,26 @@ section
     pointer-events: none
     span:first-child
       font-weight: bold
-.line-area
-  text-align: center
-  position: relative
-  .row
-    #line-chart
-      @include absCenter
+
+.trend-area
+  margin-top: 10rem
+  display: flex
+  justify-content: center
+  flex-wrap: wrap
+  &__plot
+    display: flex
+    justify-content: center
+    flex: 0 0 100%
+
 .lollipop-area
-  text-align: center
-  margin-bottom: 10rem
-  .row
-    padding-top: 7rem
-    #lollipop
-      // margin: 0 auto
-  .lollipop
-    height: 100vh
+  margin-top: 10rem
+  display: flex
+  justify-content: center
+  flex-wrap: wrap
+  &__plot
+    display: flex
+    justify-content: center
+    flex: 0 0 100%
     .tooltip
       z-index: 1000
       display: inline-block
@@ -65,9 +81,26 @@ section
       div
         text-align: center
         font-weight: bold
+
+.q-separator
+  height: 1px !important
+  margin: 0 20rem !important
+  @media only screen and (max-width: $bp-largest)
+    margin: 0 10rem !important
+  
+  @media only screen and (max-width: $bp-large)
+    margin: 0 5rem !important
+
 .methodology
   height: 100%
   margin: 10rem 25rem
+
+  @media only screen and (max-width: $bp-largest)
+    margin: 5rem 15rem
+  
+  @media only screen and (max-width: $bp-large)
+    margin: 2rem 10rem
+
   .methodology--paragraph
     padding-top: 5rem
     p
@@ -78,7 +111,7 @@ section
     h4
       font-size: 2rem
       text-transform: uppercase
-      // font-weight: bold
+
 aside
   z-index: 2000
   .range-field
