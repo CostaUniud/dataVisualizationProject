@@ -26,9 +26,13 @@
       <a href="https://www.who.int/mental_health/suicide-prevention/mortality_data_quality/en/">Quality of suicide mortality data</a>).
       <br>
       The second dataset is instead a collection of different World Happiness Reports published annually by the United Nations Sustainable Development Solutions Network.
-      The rankings of national happiness are based on a Cantril ladder survey. Nationally representative samples of respondents are asked to think of a ladder,
+      The happiness scores and rankings use data from the <a href="https://news.gallup.com/poll/105226/world-poll-methodology.aspx">Gallup World Poll</a>.
+      The scores are based on answers to the main life evaluation question asked in the poll. This question, known as the Cantril ladder, asks respondents to think of a ladder
+      with the best possible life for them being a 10 and the worst possible life being a 0 and to rate their own current lives on that scale.
+      The scores are from nationally representative samples for the years 2013-2016 and use the Gallup weights to make the estimates representative.
+      <!-- The rankings of national happiness are based on a Cantril ladder survey. Nationally representative samples of respondents are asked to think of a ladder,
       with the best possible life for them being a 10, and the worst possible life being a 0. They are then asked to rate their own current lives on that 0 to 10 scale.
-      The report correlates the results with various life factors.
+      The report correlates the results with various life factors. -->
     </p>
     <h4>The map</h4>
     <p>
